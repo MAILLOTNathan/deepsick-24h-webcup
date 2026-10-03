@@ -20,6 +20,9 @@ export function PublicFooter() {
           <Link href="/contact" className="hover:text-primary">
             [ Contact ]
           </Link>
+          <Link href="/apparence" className="hover:text-primary">
+            [ Apparence ]
+          </Link>
         </div>
       </div>
     </footer>

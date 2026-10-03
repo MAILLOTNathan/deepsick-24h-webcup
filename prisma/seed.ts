@@ -1,11 +1,16 @@
 /**
- * Seed the database with believable Nova Terra demo data.
+ * Seed Terra Nova with believable colony data.
  * Run with: npx prisma db seed   (or `npm run db:seed`)
  *
- * Demo accounts (password: `password123`):
- *   - citoyen@novaterra.fr  → CITIZEN
- *   - agent@novaterra.fr    → AGENT
- *   - admin@novaterra.fr    → ADMIN
+ * Demo accounts — password `password123`:
+ *   citoyen@terranova.fr         → CITIZEN      (Amina Okafor)
+ *   securite@terranova.fr        → SECURITY     (Sana Rhee)
+ *   medical@terranova.fr         → MEDIC        (Dr Ilyas Voss)
+ *   maintenance@terranova.fr     → MAINTENANCE  (Mateo Silva)
+ *   transport@terranova.fr       → DRIVER       (Nadia Petrov)
+ *   commerce@terranova.fr        → MERCHANT     (Yuki Tanaka)
+ *   administration@terranova.fr  → ADMIN_AGENT  (Claire Fontaine)
+ *   conseil@terranova.fr         → COUNCIL      (Elias Marr)
  */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -13,211 +18,88 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 const DEMO_PASSWORD = "password123";
 
+const USERS = [
+  { email: "citoyen@terranova.fr", name: "Amina Okafor", role: "CITIZEN", sector: "Secteur 01 · Habitat", balance: 1240 },
+  { email: "securite@terranova.fr", name: "Sana Rhee", role: "SECURITY", sector: "Secteur 04 · Rempart", balance: 0 },
+  { email: "medical@terranova.fr", name: "Dr Ilyas Voss", role: "MEDIC", sector: "Secteur 02 · BioDôme", balance: 0 },
+  { email: "maintenance@terranova.fr", name: "Mateo Silva", role: "MAINTENANCE", sector: "Secteur 05 · Industrie", balance: 0 },
+  { email: "transport@terranova.fr", name: "Nadia Petrov", role: "DRIVER", sector: "Secteur 03 · Planitia", balance: 0 },
+  { email: "commerce@terranova.fr", name: "Yuki Tanaka", role: "MERCHANT", sector: "Secteur 02 · BioDôme", balance: 0 },
+  { email: "administration@terranova.fr", name: "Claire Fontaine", role: "ADMIN_AGENT", sector: "Centre civique", balance: 0 },
+  { email: "conseil@terranova.fr", name: "Elias Marr", role: "COUNCIL", sector: "Centre civique", balance: 0 },
+];
+
 async function main() {
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
 
-  const citizen = await prisma.user.upsert({
-    where: { email: "citoyen@novaterra.fr" },
-    update: { name: "Camille Duval", passwordHash, role: "CITIZEN" },
-    create: {
-      name: "Camille Duval",
-      email: "citoyen@novaterra.fr",
-      passwordHash,
-      role: "CITIZEN",
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: "agent@novaterra.fr" },
-    update: { name: "Sacha Moreau", passwordHash, role: "AGENT" },
-    create: {
-      name: "Sacha Moreau",
-      email: "agent@novaterra.fr",
-      passwordHash,
-      role: "AGENT",
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: "admin@novaterra.fr" },
-    update: { name: "Alex Novak", passwordHash, role: "ADMIN" },
-    create: {
-      name: "Alex Novak",
-      email: "admin@novaterra.fr",
-      passwordHash,
-      role: "ADMIN",
-    },
-  });
-
-  const services = [
-    {
-      slug: "etat-civil",
-      name: "État civil",
-      category: "Administration",
-      icon: "📜",
-      order: 1,
-      description:
-        "Actes de naissance, mariage, PACS et attestations. Le service centralise les démarches d'état civil des habitants de Nova Terra.",
-    },
-    {
-      slug: "dechets-proprete",
-      name: "Déchets et propreté",
-      category: "Cadre de vie",
-      icon: "♻️",
-      order: 2,
-      description:
-        "Collecte des ordures ménagères, tri sélectif et signalement des dépôts sauvages dans les quartiers de la ville.",
-    },
-    {
-      slug: "voirie",
-      name: "Voirie et espaces publics",
-      category: "Cadre de vie",
-      icon: "🛠️",
-      order: 3,
-      description:
-        "Entretien de la chaussée, nids-de-poule, signalisation et mobilier urbain. Signalez une anomalie en quelques clics.",
-    },
-    {
-      slug: "eclairage-public",
-      name: "Éclairage public",
-      category: "Cadre de vie",
-      icon: "💡",
-      order: 4,
-      description:
-        "Signalement des lampadaires en panne, éclairage des tunnels et des modules d'habitation de la colonie.",
-    },
-    {
-      slug: "espaces-verts",
-      name: "Espaces verts",
-      category: "Cadre de vie",
-      icon: "🌿",
-      order: 5,
-      description:
-        "Serres municipales, parcs et plantations. Découvrez les espaces entretenus par les équipes de la ville.",
-    },
-    {
-      slug: "transports-municipaux",
-      name: "Transports municipaux",
-      category: "Mobilité",
-      icon: "🚆",
-      order: 6,
-      description:
-        "Lignes de transport, horaires et abonnements. Voyagez facilement entre les secteurs de Nova Terra.",
-    },
-  ];
-
-  for (const service of services) {
-    await prisma.municipalService.upsert({
-      where: { slug: service.slug },
-      update: service,
-      create: service,
+  const users: Record<string, { id: string }> = {};
+  for (const user of USERS) {
+    users[user.role] = await prisma.user.upsert({
+      where: { email: user.email },
+      update: { ...user, passwordHash },
+      create: { ...user, passwordHash },
     });
   }
 
-  const announcements = [
-    {
-      slug: "ouverture-plateforme-citoyenne",
-      title: "Ouverture de la plateforme citoyenne de Nova Terra",
-      excerpt:
-        "Créer votre compte, suivre vos demandes et contacter les services municipaux : la plateforme ouvre ses portes.",
-      body:
-        "Habitants de Nova Terra,\n\nLa ville met en service sa plateforme citoyenne. Vous pouvez désormais créer votre compte, découvrir les services municipaux, lire les annonces officielles et suivre l'avancement de vos demandes.\n\nLes agents municipaux disposent de leur propre espace pour traiter vos demandes dans les meilleurs délais.\n\nBienvenue sur le réseau des services de Nova Terra.",
-      published: true,
-      publishedAt: new Date("2026-10-01T08:00:00Z"),
-    },
-    {
-      slug: "travaux-ligne-2",
-      title: "Travaux sur la ligne 2 des transports municipaux",
-      excerpt:
-        "La ligne 2 sera interrompue entre les secteurs Nord et Central pendant trois jours.",
-      body:
-        "Des travaux de maintenance sont programmés sur la ligne 2. La circulation sera interrompue entre les secteurs Nord et Central du 8 au 10 octobre.\n\nUne navette de remplacement circulera toutes les quinze minutes depuis la station centrale.",
-      published: true,
-      publishedAt: new Date("2026-10-02T09:30:00Z"),
-    },
-    {
-      slug: "collecte-dechets-verts",
-      title: "Campagne de collecte des déchets verts",
-      excerpt:
-        "Une collecte exceptionnelle des déchets verts est organisée dans tous les secteurs.",
-      body:
-        "La ville organise une collecte exceptionnelle des déchets verts. Déposez vos branchages et résidus de taille aux points de collecte indiqués, du 12 au 15 octobre.",
-      published: true,
-      publishedAt: new Date("2026-10-03T07:15:00Z"),
-    },
+  const citizen = users.CITIZEN;
+  const officer = users.SECURITY;
+  const medic = users.MEDIC;
+  const technician = users.MAINTENANCE;
+  const driver = users.DRIVER;
+  const merchant = users.MERCHANT;
+  const adminAgent = users.ADMIN_AGENT;
+  const council = users.COUNCIL;
+
+  /* --- Civic services directory (D05) ---------------------------------- */
+  const services = [
+    { slug: "securite", name: "Sécurité publique", category: "Protection", icon: "🛡️", order: 1, description: "Ares Security Command veille sur les secteurs de la colonie : signalements, escorte et coordination des interventions." },
+    { slug: "medical", name: "Soins médicaux", category: "Santé", icon: "✚", order: 2, description: "Asclepius Medical Net assure le triage des urgences, les soins courants et l'accès aux modules médicaux." },
+    { slug: "maintenance", name: "Infrastructure", category: "Technique", icon: "🛠️", order: 3, description: "Hephaestus Infrastructure maintient le recyclage d'air, l'énergie, l'eau et la propreté des modules." },
+    { slug: "transport", name: "Transport & logistique", category: "Mobilité", icon: "🚡", order: 4, description: "Hermes Mobility Net opère les rovers, les navettes et le fret entre les secteurs de Nova Terra." },
+    { slug: "commerce", name: "Commerce & restauration", category: "Vie quotidienne", icon: "🍜", order: 5, description: "Mercator Exchange réunit les cantines et fournisseurs de la colonie : commandes et livraisons." },
+    { slug: "demarches", name: "Démarches administratives", category: "Administration", icon: "📄", order: 6, description: "Permis, autorisations et documents officiels traités par le Bureau des démarches." },
   ];
+  for (const service of services) {
+    await prisma.municipalService.upsert({ where: { slug: service.slug }, update: service, create: service });
+  }
 
-  const admin = await prisma.user.findUniqueOrThrow({ where: { email: "admin@novaterra.fr" } });
-
+  /* --- Council announcements (D06) ------------------------------------- */
+  const announcements = [
+    { slug: "colonisation-phase-deux", title: "Phase deux de colonisation : ouverture du Secteur 05", excerpt: "Le Haut Conseil ouvre les attributions de logements du Secteur 05.", body: "Habitants de Nova Terra,\n\nLa phase deux de colonisation ouvre le Secteur 05 aux nouvelles familles. Les demandes d'attribution se font depuis le Bureau des démarches, rubrique Logement.\n\nLe Haut Conseil de Nova Terra.", published: true, publishedAt: new Date("2026-10-01T08:00:00Z") },
+    { slug: "maintenance-recyclage-air", title: "Maintenance planifiée du recyclage d'air", excerpt: "Interruption de courte durée sur le module HAB 07.", body: "Une maintenance planifiée du recyclage d'air aura lieu sur le module HAB 07. Les équipes Hephaestus interviendront hors cycle de sommeil.", published: true, publishedAt: new Date("2026-10-02T09:30:00Z") },
+    { slug: "campagne-vaccination", title: "Campagne de vaccination saisonnière", excerpt: "Asclepius Medical Net ouvre des créneaux dans tous les secteurs.", body: "La campagne de vaccination saisonnière débute cette semaine. Présentez-vous au module médical de votre secteur avec votre identifiant colon.", published: true, publishedAt: new Date("2026-10-03T07:15:00Z") },
+  ];
   for (const announcement of announcements) {
     await prisma.announcement.upsert({
       where: { slug: announcement.slug },
-      update: { ...announcement, authorId: admin.id },
-      create: { ...announcement, authorId: admin.id },
+      update: { ...announcement, authorId: council.id },
+      create: { ...announcement, authorId: council.id },
     });
   }
 
-  const requests = [
-    {
-      reference: "REQ-2026-0001",
-      subject: "Lampadaire en panne rue des Serres",
-      description:
-        "Le lampadaire situé devant le module 12 est éteint depuis trois nuits. La rue est très sombre.",
-      category: "Éclairage",
-      priority: "HIGH",
-      status: "SUBMITTED",
-    },
-    {
-      reference: "REQ-2026-0002",
-      subject: "Nid-de-poule avenue du Dôme",
-      description:
-        "Un nid-de-poule s'est formé près du croisement avec la rue Kepler et abîme les véhicules.",
-      category: "Voirie",
-      priority: "NORMAL",
-      status: "IN_REVIEW",
-    },
-    {
-      reference: "REQ-2026-0003",
-      subject: "Recensement des arbres du parc central",
-      description:
-        "Serait-il possible d'obtenir la liste des essences plantées dans le parc central ?",
-      category: "Espaces verts",
-      priority: "LOW",
-      status: "IN_PROGRESS",
-    },
-    {
-      reference: "REQ-2026-0004",
-      subject: "Demande d'attestation de domicile",
-      description:
-        "Je souhaite obtenir une attestation de domicile pour compléter un dossier administratif.",
-      category: "État civil",
-      priority: "NORMAL",
-      status: "RESOLVED",
-    },
+  /* --- Reports (signalements) ------------------------------------------ */
+  const reports = [
+    { reference: "INC-042", type: "SECURITY", title: "Alerte intrusion airlock", description: "Détection d'une ouverture non autorisée sur le sas du Secteur 04. Aucun badge enregistré.", priority: "CRITICAL", status: "EN_ROUTE", sector: "Secteur 04 · Rempart", unit: "ARES-04", assigneeId: officer.id },
+    { reference: "INC-029", type: "SECURITY", title: "Mouvement de rover non enregistré", description: "Un rover circule sur la boucle de service est sans transpondeur actif.", priority: "HIGH", status: "IN_PROGRESS", sector: "Secteur 03 · Planitia", unit: "ARES-02", assigneeId: officer.id },
+    { reference: "MED-118", type: "MEDICAL", title: "Symptômes de décompression (EVA)", description: "Colon revenu d'EVA avec douleurs articulaires et vertiges. Triage prioritaire.", priority: "CRITICAL", status: "IN_PROGRESS", sector: "Secteur 02 · BioDôme", unit: "ASC-01", assigneeId: medic.id },
+    { reference: "MED-116", type: "MEDICAL", title: "Fracture du poignet suspectée", description: "Chute dans le module de transit, immobilisation en cours.", priority: "HIGH", status: "ASSIGNED", sector: "Secteur 03 · Planitia", unit: "ASC-03", assigneeId: medic.id },
+    { reference: "MNT-482", type: "MAINTENANCE", title: "Vibration du recycleur d'air", description: "Vibration anormale du recycleur du module HAB 07 depuis le cycle précédent.", priority: "HIGH", status: "IN_PROGRESS", sector: "Secteur 01 · Habitat", unit: "HEP-07", assigneeId: technician.id },
+    { reference: "MNT-477", type: "MAINTENANCE", title: "Dérive thermique du bus d'énergie", description: "Température du bus principal en hausse sur le champ solaire B.", priority: "CRITICAL", status: "EN_ROUTE", sector: "Secteur 05 · Industrie", unit: "HEP-02", assigneeId: technician.id },
+    { reference: "CLN-014", type: "CLEANLINESS", title: "Déchets accumulés au quai C", description: "Conteneurs pleins au quai de déchargement, risque de contamination.", priority: "NORMAL", status: "OPEN", sector: "Secteur 05 · Industrie", unit: null, assigneeId: null },
+    { reference: "INC-038", type: "SECURITY", title: "Différend au marché central", description: "Altercation verbale signalée puis résolue par la patrouille.", priority: "NORMAL", status: "CLOSED", sector: "Secteur 02 · BioDôme", unit: "ARES-01", assigneeId: officer.id },
   ];
 
-  for (const request of requests) {
-    await prisma.serviceRequest.upsert({
-      where: { reference: request.reference },
-      update: {
-        subject: request.subject,
-        description: request.description,
-        category: request.category,
-        priority: request.priority,
-        status: request.status,
-      },
+  for (const report of reports) {
+    await prisma.report.upsert({
+      where: { reference: report.reference },
+      update: { ...report },
       create: {
-        reference: request.reference,
-        subject: request.subject,
-        description: request.description,
-        category: request.category,
-        priority: request.priority,
-        status: request.status,
+        ...report,
         authorId: citizen.id,
-        history: {
+        events: {
           create: {
-            status: "SUBMITTED",
-            note: "Demande créée par l'habitant.",
+            status: "OPEN",
+            note: "Signalement transmis par un colon.",
             actorId: citizen.id,
           },
         },
@@ -225,24 +107,105 @@ async function main() {
     });
   }
 
-  const existingMessages = await prisma.contactMessage.count();
-  if (existingMessages === 0) {
+  /* --- A filed police case on the closed incident ---------------------- */
+  const closedIncident = await prisma.report.findUniqueOrThrow({ where: { reference: "INC-038" } });
+  await prisma.policeCase.upsert({
+    where: { reportId: closedIncident.id },
+    update: {},
+    create: {
+      reportId: closedIncident.id,
+      officerId: officer.id,
+      suspectName: "K. Doran",
+      arrestNotes: "Rappel à l'ordre, aucun dommage constaté. Différend résolu sur place.",
+      fineAmount: 40,
+      pvContent: "PV simulé ARES-2026-0031 — trouble à l'ordre sur le marché central.",
+      status: "FILED",
+    },
+  });
+
+  /* --- Orders: taxi + restauration ------------------------------------- */
+  const orders = [
+    { reference: "TRN-118", type: "TAXI", status: "IN_TRANSIT", summary: "Rover TX-22 · Habitat 07 → BioDôme 03", total: 12, etaMinutes: 8, origin: "Habitat 07", destination: "BioDôme 03", providerId: driver.id },
+    { reference: "COM-084", type: "FOOD", status: "PREPARING", summary: "Souper hydroponique · cuisine des Communs", total: 18, etaMinutes: 24, origin: "Commons Kitchen", destination: null, providerId: merchant.id },
+    { reference: "COM-079", type: "FOOD", status: "COMPLETED", summary: "Bol de céréales Redleaf", total: 14, etaMinutes: null, origin: "Commons Kitchen", destination: null, providerId: merchant.id },
+  ];
+  for (const order of orders) {
+    await prisma.order.upsert({
+      where: { reference: order.reference },
+      update: { ...order },
+      create: { ...order, customerId: citizen.id },
+    });
+  }
+
+  /* --- Notifications + wallet ------------------------------------------ */
+  await prisma.notification.deleteMany({ where: { userId: citizen.id } });
+  await prisma.notification.createMany({
+    data: [
+      { userId: citizen.id, title: "Incident INC-042 pris en charge", body: "Une patrouille Ares est en route vers le Secteur 04.", href: "/citizen/reports", read: false },
+      { userId: citizen.id, title: "Course TRN-118 confirmée", body: "Rover TX-22 · arrivée estimée dans 8 minutes.", href: "/citizen/orders", read: false },
+      { userId: citizen.id, title: "Commande COM-084 en préparation", body: "Mercator Exchange prépare votre commande.", href: "/citizen/orders", read: true },
+      { userId: citizen.id, title: "Nouvelle annonce du Haut Conseil", body: "Ouverture du Secteur 05 aux nouvelles familles.", href: "/announcements", read: true },
+    ],
+  });
+
+  await prisma.walletTransaction.deleteMany({ where: { userId: citizen.id } });
+  await prisma.walletTransaction.createMany({
+    data: [
+      { userId: citizen.id, label: "Allocation civique — Sol 0418", amount: 120 },
+      { userId: citizen.id, label: "Course Hermes TRN-118", amount: -12 },
+      { userId: citizen.id, label: "Commande Mercator COM-084", amount: -18 },
+      { userId: citizen.id, label: "Remboursement fournitures", amount: 35 },
+    ],
+  });
+
+  /* --- Démarches administratives (D03 / F22) --------------------------- */
+  const requests = [
+    { reference: "REQ-2026-0001", subject: "Demande d'attribution — Secteur 05", description: "Nous souhaitons candidater pour un logement familial en phase deux.", category: "Logement", priority: "HIGH", status: "IN_REVIEW" },
+    { reference: "REQ-2026-0002", subject: "Permis de conduire rover (classe B)", description: "Demande d'habilitation pour conduire les rovers pressurisés.", category: "Permis", priority: "NORMAL", status: "IN_PROGRESS" },
+    { reference: "REQ-2026-0003", subject: "Attestation de résidence", description: "Attestation nécessaire pour un dossier administratif.", category: "Documents", priority: "LOW", status: "RESOLVED" },
+  ];
+  for (const request of requests) {
+    await prisma.serviceRequest.upsert({
+      where: { reference: request.reference },
+      update: { ...request, assigneeId: adminAgent.id },
+      create: {
+        ...request,
+        authorId: citizen.id,
+        assigneeId: adminAgent.id,
+        history: { create: { status: "SUBMITTED", note: "Demande déposée par le colon.", actorId: citizen.id } },
+      },
+    });
+  }
+
+  /* --- Contact message (D04) ------------------------------------------- */
+  const messageCount = await prisma.contactMessage.count();
+  if (messageCount === 0) {
     await prisma.contactMessage.create({
       data: {
         reference: "MSG-2026-0001",
-        subject: "Question sur les horaires de la navette",
-        body: "Bonjour, pourriez-vous m'indiquer les horaires de la navette de remplacement de la ligne 2 ?",
-        email: "citoyen@novaterra.fr",
+        subject: "Horaires de la navette Hermes",
+        body: "Bonjour, quels sont les horaires de la navette entre Habitat 07 et le BioDôme ?",
+        email: "citoyen@terranova.fr",
         authorId: citizen.id,
         status: "RECEIVED",
       },
     });
   }
 
-  console.log("✅ Nova Terra demo data seeded.");
-  console.log(`   citoyen@novaterra.fr / ${DEMO_PASSWORD}`);
-  console.log(`   agent@novaterra.fr   / ${DEMO_PASSWORD}`);
-  console.log(`   admin@novaterra.fr   / ${DEMO_PASSWORD}`);
+  /* --- Messagerie ------------------------------------------------------- */
+  const msgCount = await prisma.message.count();
+  if (msgCount === 0) {
+    await prisma.message.createMany({
+      data: [
+        { channel: "securite", content: "Patrouille ARES-04 engagée sur INC-042.", senderId: officer.id },
+        { channel: "maintenance", content: "Intervention recycleur HAB 07 programmée ce cycle.", senderId: technician.id },
+      ],
+    });
+  }
+
+  console.log("✅ Terra Nova ecosystem seeded.");
+  for (const user of USERS) console.log(`   ${user.email.padEnd(30)} ${user.role}`);
+  console.log(`   mot de passe : ${DEMO_PASSWORD}`);
 }
 
 main()

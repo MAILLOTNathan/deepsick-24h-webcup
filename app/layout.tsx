@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/shadcn/sonner";
 import { TooltipProvider } from "@/components/shadcn/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import { DEFAULT_THEME, THEME_IDS } from "@/lib/themes";
 
 export const metadata: Metadata = {
   title: {
@@ -20,9 +21,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme={DEFAULT_THEME}
+          themes={THEME_IDS}
           enableSystem
+          enableColorScheme={false}
           disableTransitionOnChange
+          storageKey="nt-theme"
         >
           <TooltipProvider>
             {children}

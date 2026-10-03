@@ -19,11 +19,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  const isStaff =
+    typeof role === "string" &&
+    ["SECURITY", "MEDIC", "MAINTENANCE", "DRIVER", "MERCHANT", "ADMIN_AGENT", "COUNCIL"].includes(
+      role,
+    );
+
   const denies =
-    (pathname.startsWith("/admin") && role !== "ADMIN") ||
-    (pathname.startsWith("/agents") && role !== "AGENT" && role !== "ADMIN") ||
-    ((pathname.startsWith("/espace") || pathname.startsWith("/demandes")) &&
-      role !== "CITIZEN");
+    (pathname.startsWith("/council") && role !== "COUNCIL") ||
+    (pathname.startsWith("/operations") && !isStaff) ||
+    (pathname.startsWith("/citizen") && role !== "CITIZEN");
 
   if (denies) {
     return NextResponse.redirect(new URL(homeForRole(role), request.url));
@@ -33,5 +38,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/espace/:path*", "/demandes/:path*", "/agents/:path*", "/admin/:path*"],
+  matcher: ["/citizen/:path*", "/operations/:path*", "/council/:path*"],
 };

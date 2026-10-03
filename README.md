@@ -1,83 +1,102 @@
-# Nova Terra — 24h Webcup
+# Terra Nova — 24h Webcup
 
-Digital platform of the city of **Nova Terra**, built for the **24h Webcup** hackathon.
+Digital ecosystem of **Terra Nova**, the first human city on Mars.
 
-Citizens sign up, log in, discover municipal services, read announcements, contact the administration
-and track their requests. Municipal agents get a dedicated workspace (separate from the citizen area)
-fed by the Nova Terra API, and administrators manage content, accounts and access rights.
+Citizens have one civic identity and can report incidents, order services (rover, meals), file
+administrative requests, read Council announcements and follow everything from a single dashboard.
+Each municipal service — security, medical, maintenance, transport, commerce, administration — gets a
+dedicated operations console fed by the same **signalement → intervention → closure** engine, and the
+High Council pilots the whole colony.
 
 ## Stack
 
-Next.js (App Router) + TypeScript · Tailwind CSS · Prisma · NextAuth.js · SQLite (dev) / PostgreSQL (prod)
-
-## Status
-
-✅ Base project implemented for the *Socle* needs — see the checklist below.
+Next.js (App Router) + TypeScript · Tailwind CSS v4 · shadcn/ui · Prisma · NextAuth.js ·
+SQLite (dev) / PostgreSQL (prod)
 
 ## Getting started
 
 ```bash
 cp .env.example .env          # then fill in the values
 npm install
-npx prisma migrate dev        # creates prisma/dev.db (SQLite) and runs the seed
+npx prisma migrate dev        # creates prisma/dev.db (SQLite)
+npm run db:seed               # Terra Nova demo dataset
 npm run dev                   # http://localhost:3000
 ```
 
-> The default `.env` targets SQLite for local dev. Prisma enums are not supported by
-> SQLite, so enum-like fields are stored as strings and validated through `lib/roles.ts`.
+```bash
+npm run db:reset              # wipe, re-migrate and re-seed (recommended after schema changes)
+```
 
-### Demo accounts (password: `password123`)
+> The default `.env` targets SQLite for local dev. SQLite has no Prisma enums, so enum-like fields
+> (`role`, `status`, `priority`, …) are stored as strings and validated through `lib/roles.ts`.
+
+## Demo accounts
+
+Password for every account: `password123`.
 
 | Account | Role | Landing page |
 | --- | --- | --- |
-| `citoyen@novaterra.fr` | `CITIZEN` | `/espace` |
-| `agent@novaterra.fr` | `AGENT` | `/agents` |
-| `admin@novaterra.fr` | `ADMIN` | `/admin` |
+| `citoyen@terranova.fr` | Citizen (Amina Okafor) | `/citizen` |
+| `securite@terranova.fr` | Security (Sana Rhee) | `/operations/security` |
+| `medical@terranova.fr` | Medical (Dr Ilyas Voss) | `/operations/medical` |
+| `maintenance@terranova.fr` | Maintenance (Mateo Silva) | `/operations/maintenance` |
+| `transport@terranova.fr` | Driver (Nadia Petrov) | `/operations/transport` |
+| `commerce@terranova.fr` | Merchant (Yuki Tanaka) | `/operations/commerce` |
+| `administration@terranova.fr` | Administrative agent (Claire Fontaine) | `/operations/administration` |
+| `conseil@terranova.fr` | High Council (Elias Marr) | `/council` |
 
-## Implemented needs
+## The core engine
 
-| Need | Feature | Status |
-| --- | --- | --- |
-| `D01` | Sign-up / account creation | ✅ |
-| `D03` | Login + personal space | ✅ |
-| `D04` | Contact the administration + acknowledgement | ✅ |
-| `D05` | Municipal services directory | ✅ |
-| `D06` | Municipal announcements | ✅ |
-| `D07` | Hierarchical home page | ✅ |
-| `D08` | Roles: citizen / agent / admin | ✅ |
-| `D09` | Differentiated permissions | ✅ |
-| `D19` | Agent workspace (Nova Terra API data) | ✅ |
-| `F22` | Citizen requests view with statuses | ✅ |
+1. A citizen files a **signalement** (security, medical, maintenance or cleanliness) from `/citizen/report`.
+2. The report is routed to the owning service and appears **live** in its console.
+3. The service takes charge, sets `EN_ROUTE` / `IN_PROGRESS` / `RESOLVED` / `CLOSED` and logs notes.
+4. Security can additionally open a simulated **arrest + PV** (police case).
+5. The citizen sees every transition in their tracking view.
 
-### Scripts
+Best demo path: citizen reports an intrusion → it appears in **Ares Security Command** → the officer
+takes charge, sets the status and files a PV.
+
+## Competition needs
+
+The Webcup needs remain demonstrable through the ecosystem:
+
+| Need | Where |
+| --- | --- |
+| `D01` | `/register` — civic identity creation |
+| `D03` | `/login` + `/citizen` personal dashboard |
+| `D04` | `/contact` — form + reference acknowledgement |
+| `D05` | `/services` — services directory |
+| `D06` | `/announcements` — Council publications |
+| `D07` | `/` — hierarchical landing page |
+| `D08` | 8 roles in `lib/roles.ts` + session |
+| `D09` | `middleware.ts` + server-side guards |
+| `D19` | `/operations/*` — dedicated service consoles |
+| `F22` | Incident/request lists with statuses and “needs action” filters |
+
+Refresh the need list whenever a wave drops — see [`docs/NEEDS.md`](docs/NEEDS.md).
+
+## Themes
+
+Ten selectable themes, including **Mars Civic OS** (the `docs/ui-v1.svg` design, now the default).
+Switch from the palette icon in any header or from `/apparence`. See
+[`docs/PROJECT.md`](docs/PROJECT.md) § 8.
+
+## Scripts
 
 | Command | Purpose |
 | --- | --- |
 | `npm run dev` | Start the dev server |
 | `npm run build` / `npm run start` | Production build / start |
 | `npm run db:migrate` | Create/apply Prisma migrations |
-| `npm run db:seed` | Seed demo data |
+| `npm run db:seed` | Seed the Terra Nova dataset |
 | `npm run db:reset` | Reset the database and re-seed |
 | `npm run db:studio` | Open Prisma Studio |
 
-
-## Competition needs
-
-The scope is driven by the needs published by the Webcup API, tracked in
-[`docs/TODO_terra_nova.md`](docs/TODO_terra_nova.md). Refresh them whenever a new wave drops:
-
-```fish
-# from the repository root
-set -x WEBCUP_API_KEY "<your-key>"
-python3 scripts/fetch_new_features.py
-```
-
-Full workflow, API reference and troubleshooting: [`docs/NEEDS.md`](docs/NEEDS.md).
-
 ## Documentation
 
-- [`AGENTS.md`](AGENTS.md) — AI coding agent brief (mission, features, data model, roadmap, demo)
+- [`AGENTS.md`](AGENTS.md) — AI coding agent brief
 - [`docs/PROJECT.md`](docs/PROJECT.md) — product & architecture overview
+- [`docs/terra_nova_ecosysteme_roles.md`](docs/terra_nova_ecosysteme_roles.md) — the ecosystem spec
 - [`docs/NEEDS.md`](docs/NEEDS.md) — needs API + fetch script workflow
 - [`docs/README.md`](docs/README.md) — documentation index
 

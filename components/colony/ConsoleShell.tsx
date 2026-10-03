@@ -1,0 +1,108 @@
+"use client";
+
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { Bell } from "lucide-react";
+
+import { StatusStrip } from "@/components/colony/StatusStrip";
+import { ThemePicker } from "@/components/layout/ThemePicker";
+import { buttonClasses } from "@/components/ui/Button";
+import { cn } from "@/lib/ui";
+
+export type ConsoleNavItem = { href: string; label: string; icon?: string };
+
+/**
+ * Shell for the citizen dashboard and the professional consoles. Mirrors the
+ * ui-v1 layout: a compact top bar (logo, station, colony pill, bell, theme),
+ * the colony status strip, then a horizontal section nav.
+ */
+export function ConsoleShell({
+  station,
+  nav,
+  children,
+  unread = 0,
+  bellHref,
+}: {
+  station: string;
+  nav: ConsoleNavItem[];
+  children: ReactNode;
+  unread?: number;
+  bellHref?: string;
+}) {
+  const pathname = usePathname();
+
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
+          <Link href={nav[0]?.href ?? "/"} className="flex items-center gap-2">
+            <span className="grid size-8 shrink-0 place-items-center rounded-full border-2 border-primary">
+              <span className="size-3 rounded-full bg-primary" />
+            </span>
+            <span className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-foreground sm:inline">
+              {station}
+            </span>
+          </Link>
+
+          <span className="ml-auto hidden items-center gap-1.5 rounded-full border border-[var(--chart-3)]/40 bg-[var(--chart-3)]/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--chart-3)] sm:inline-flex">
+            <span className="inline-block size-1.5 rounded-full bg-[var(--chart-3)]" />
+            Colony nominal
+          </span>
+
+          {bellHref ? (
+            <Link
+              href={bellHref}
+              aria-label="Notifications"
+              className={cn(buttonClasses("ghost", "sm"), "relative")}
+            >
+              <Bell className="size-4" />
+              {unread > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-destructive font-mono text-[9px] text-white">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              ) : null}
+            </Link>
+          ) : null}
+
+          <ThemePicker />
+
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className={buttonClasses("ghost", "sm")}
+          >
+            Quitter
+          </button>
+        </div>
+
+        <StatusStrip />
+      </header>
+
+      <nav className="border-b border-border bg-card/30">
+        <div className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 py-2">
+          {nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wide transition",
+                isActive(item.href)
+                  ? "bg-muted text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              {item.icon ? <span aria-hidden>{item.icon}</span> : null}
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      <main className="mx-auto max-w-5xl px-4 py-5">{children}</main>
+    </div>
+  );
+}

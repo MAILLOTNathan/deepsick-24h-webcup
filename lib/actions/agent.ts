@@ -6,8 +6,9 @@ import { requirePageRole } from "@/lib/permissions";
 import { assignRequest, updateRequestStatus } from "@/lib/services";
 import { isRequestStatus } from "@/lib/roles";
 
+/** Démarches administratives: move a citizen request forward and log a note. */
 export async function updateRequestStatusAction(formData: FormData) {
-  const session = await requirePageRole(["AGENT", "ADMIN"]);
+  const session = await requirePageRole(["ADMIN_AGENT", "COUNCIL"]);
 
   const requestId = String(formData.get("requestId") ?? "");
   const status = String(formData.get("status") ?? "");
@@ -17,21 +18,19 @@ export async function updateRequestStatusAction(formData: FormData) {
 
   await updateRequestStatus(requestId, status, session.user.id, note);
 
-  revalidatePath("/agents");
-  revalidatePath("/agents/demandes");
-  revalidatePath(`/agents/demandes/${requestId}`);
-  revalidatePath(`/demandes/${requestId}`);
-  revalidatePath("/espace");
+  revalidatePath("/operations/administration");
+  revalidatePath(`/operations/administration/${requestId}`);
+  revalidatePath("/citizen");
+  revalidatePath("/citizen/reports");
 }
 
 export async function assignToMeAction(formData: FormData) {
-  const session = await requirePageRole(["AGENT", "ADMIN"]);
+  const session = await requirePageRole(["ADMIN_AGENT", "COUNCIL"]);
   const requestId = String(formData.get("requestId") ?? "");
   if (!requestId) return;
 
   await assignRequest(requestId, session.user.id);
 
-  revalidatePath("/agents");
-  revalidatePath("/agents/demandes");
-  revalidatePath(`/agents/demandes/${requestId}`);
+  revalidatePath("/operations/administration");
+  revalidatePath(`/operations/administration/${requestId}`);
 }

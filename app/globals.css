@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark *, .mars-civic *, .bio-dome *, .nebula *, .solar-flare *, .glacier *, .iron-oxide *, .void *));
 
 @theme inline {
   --color-background: var(--background);
@@ -60,6 +60,7 @@
 
 /* --- Light: "paper terminal" --------------------------------------------- */
 :root {
+  color-scheme: light;
   --radius: 0.25rem;
 
   --background: oklch(0.97 0.008 150);
@@ -106,6 +107,7 @@
 
 /* --- Dark: CRT phosphor (default) ---------------------------------------- */
 .dark {
+  color-scheme: dark;
   --background: oklch(0.16 0.015 160);
   --foreground: oklch(0.92 0.03 150);
   --card: oklch(0.2 0.02 160);
@@ -146,6 +148,254 @@
   --mars: var(--primary);
   --alert: var(--destructive);
   --info: oklch(0.78 0.13 220);
+}
+
+/* --- Additional selectable themes ---------------------------------------- */
+/* Every theme fills the same token contract. `light` and `dark` are defined
+   above; the eight classes below add the rest (incl. "Mars Civic OS", the
+   design from docs/ui-v1.svg). next-themes applies the active theme name as a
+   class on <html>, so these selectors are plain class selectors. The
+   `@custom-variant dark` list above must be kept in sync with the dark-family
+   themes here (see also lib/themes.ts). */
+
+/* Mars Civic OS — the ui-v1 design: deep-space blue, Mars orange, cyan. */
+.mars-civic {
+  color-scheme: dark;
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+  --card: #111827;
+  --card-foreground: #f8fafc;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #f4a261;
+  --primary-foreground: #0b0f19;
+  --secondary: #1f2937;
+  --secondary-foreground: #e2e8f0;
+  --muted: #1b2534;
+  --muted-foreground: #8290a3;
+  --accent: #1e293b;
+  --accent-foreground: #e2e8f0;
+  --destructive: #e63946;
+  --destructive-foreground: #0b0f19;
+  --border: #334155;
+  --input: #334155;
+  --ring: #f4a261;
+  --chart-1: #f4a261;
+  --chart-2: #38bdf8;
+  --chart-3: #62c58b;
+  --chart-4: #e63946;
+  --chart-5: #8290a3;
+  --info: #38bdf8;
+}
+
+/* Bio-Dôme — hydroponics green over black glass. */
+.bio-dome {
+  color-scheme: dark;
+  --background: #07130c;
+  --foreground: #e7fbef;
+  --card: #0d2018;
+  --card-foreground: #e7fbef;
+  --popover: #0d2018;
+  --popover-foreground: #e7fbef;
+  --primary: #4ade80;
+  --primary-foreground: #052012;
+  --secondary: #123024;
+  --secondary-foreground: #cff7e0;
+  --muted: #10291e;
+  --muted-foreground: #7dbf9c;
+  --accent: #123024;
+  --accent-foreground: #cff7e0;
+  --destructive: #f87171;
+  --destructive-foreground: #1a0505;
+  --border: #1f4d38;
+  --input: #1f4d38;
+  --ring: #4ade80;
+  --chart-1: #4ade80;
+  --chart-2: #2dd4bf;
+  --chart-3: #a3e635;
+  --chart-4: #f87171;
+  --chart-5: #7dbf9c;
+  --info: #2dd4bf;
+}
+
+/* Nébuleuse — violet and magenta deep field. */
+.nebula {
+  color-scheme: dark;
+  --background: #0b0714;
+  --foreground: #f3eeff;
+  --card: #170f2a;
+  --card-foreground: #f3eeff;
+  --popover: #170f2a;
+  --popover-foreground: #f3eeff;
+  --primary: #c084fc;
+  --primary-foreground: #160a24;
+  --secondary: #241540;
+  --secondary-foreground: #e5dbff;
+  --muted: #1e1235;
+  --muted-foreground: #a78bfa;
+  --accent: #241540;
+  --accent-foreground: #e5dbff;
+  --destructive: #fb7185;
+  --destructive-foreground: #1a0508;
+  --border: #3b2a5a;
+  --input: #3b2a5a;
+  --ring: #c084fc;
+  --chart-1: #c084fc;
+  --chart-2: #60a5fa;
+  --chart-3: #f472b6;
+  --chart-4: #fb7185;
+  --chart-5: #a78bfa;
+  --info: #60a5fa;
+}
+
+/* Éruption Solaire — amber furnace. */
+.solar-flare {
+  color-scheme: dark;
+  --background: #140a03;
+  --foreground: #fff6e5;
+  --card: #241206;
+  --card-foreground: #fff6e5;
+  --popover: #241206;
+  --popover-foreground: #fff6e5;
+  --primary: #fbbf24;
+  --primary-foreground: #1c1002;
+  --secondary: #3a1d08;
+  --secondary-foreground: #ffe9bf;
+  --muted: #2e1706;
+  --muted-foreground: #d9a441;
+  --accent: #3a1d08;
+  --accent-foreground: #ffe9bf;
+  --destructive: #ef4444;
+  --destructive-foreground: #1a0505;
+  --border: #5a3312;
+  --input: #5a3312;
+  --ring: #fbbf24;
+  --chart-1: #fbbf24;
+  --chart-2: #f97316;
+  --chart-3: #a3e635;
+  --chart-4: #ef4444;
+  --chart-5: #d9a441;
+  --info: #f97316;
+}
+
+/* Glacier — pressurized ice blue. */
+.glacier {
+  color-scheme: dark;
+  --background: #050b14;
+  --foreground: #eaf6ff;
+  --card: #0b1a2b;
+  --card-foreground: #eaf6ff;
+  --popover: #0b1a2b;
+  --popover-foreground: #eaf6ff;
+  --primary: #7dd3fc;
+  --primary-foreground: #04121f;
+  --secondary: #12304a;
+  --secondary-foreground: #d6eeff;
+  --muted: #0f2740;
+  --muted-foreground: #7fa8c9;
+  --accent: #12304a;
+  --accent-foreground: #d6eeff;
+  --destructive: #fb7185;
+  --destructive-foreground: #1a0508;
+  --border: #1e4a6e;
+  --input: #1e4a6e;
+  --ring: #7dd3fc;
+  --chart-1: #7dd3fc;
+  --chart-2: #38bdf8;
+  --chart-3: #a5f3fc;
+  --chart-4: #fb7185;
+  --chart-5: #7fa8c9;
+  --info: #38bdf8;
+}
+
+/* Oxyde de Fer — rust, copper and dust. */
+.iron-oxide {
+  color-scheme: dark;
+  --background: #120a08;
+  --foreground: #fbeae1;
+  --card: #241411;
+  --card-foreground: #fbeae1;
+  --popover: #241411;
+  --popover-foreground: #fbeae1;
+  --primary: #e07a5f;
+  --primary-foreground: #1b0a06;
+  --secondary: #3a211b;
+  --secondary-foreground: #f2d6cb;
+  --muted: #2e1a15;
+  --muted-foreground: #b08968;
+  --accent: #3a211b;
+  --accent-foreground: #f2d6cb;
+  --destructive: #e63946;
+  --destructive-foreground: #1a0505;
+  --border: #5a342a;
+  --input: #5a342a;
+  --ring: #e07a5f;
+  --chart-1: #e07a5f;
+  --chart-2: #64b5f6;
+  --chart-3: #e9c46a;
+  --chart-4: #e63946;
+  --chart-5: #b08968;
+  --info: #64b5f6;
+}
+
+/* Grand Jour — warm daylight paper. */
+.daylight {
+  color-scheme: light;
+  --background: #fbf7ef;
+  --foreground: #241c10;
+  --card: #ffffff;
+  --card-foreground: #241c10;
+  --popover: #ffffff;
+  --popover-foreground: #241c10;
+  --primary: #b45309;
+  --primary-foreground: #fff8ed;
+  --secondary: #f1e7d4;
+  --secondary-foreground: #3a2c15;
+  --muted: #f3ead9;
+  --muted-foreground: #6b5a3e;
+  --accent: #efe1c6;
+  --accent-foreground: #3a2c15;
+  --destructive: #b91c1c;
+  --destructive-foreground: #fff5f5;
+  --border: #e0cfb0;
+  --input: #e0cfb0;
+  --ring: #b45309;
+  --chart-1: #b45309;
+  --chart-2: #0369a1;
+  --chart-3: #15803d;
+  --chart-4: #b91c1c;
+  --chart-5: #6b5a3e;
+  --info: #0369a1;
+}
+
+/* Vide Absolu — maximum-contrast accessibility theme. */
+.void {
+  color-scheme: dark;
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #0a0a0a;
+  --card-foreground: #ffffff;
+  --popover: #0a0a0a;
+  --popover-foreground: #ffffff;
+  --primary: #ffd400;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ffffff;
+  --muted: #141414;
+  --muted-foreground: #d4d4d4;
+  --accent: #1f1f1f;
+  --accent-foreground: #ffffff;
+  --destructive: #ff2d55;
+  --destructive-foreground: #000000;
+  --border: #4d4d4d;
+  --input: #4d4d4d;
+  --ring: #ffd400;
+  --chart-1: #ffd400;
+  --chart-2: #00e5ff;
+  --chart-3: #00e676;
+  --chart-4: #ff2d55;
+  --chart-5: #d4d4d4;
+  --info: #00e5ff;
 }
 
 @layer base {

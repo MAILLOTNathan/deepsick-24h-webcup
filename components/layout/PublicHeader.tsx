@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { ThemePicker } from "@/components/layout/ThemePicker";
 import { buttonClasses } from "@/components/ui/Button";
 import { homeForRole } from "@/lib/roles";
 import { cn } from "@/lib/ui";
@@ -55,7 +55,7 @@ export function PublicHeader({
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <ThemeToggle />
+          <ThemePicker />
           {user ? (
             <>
               <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>
@@ -106,7 +106,7 @@ export function PublicHeader({
             ))}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <ThemeToggle />
+            <ThemePicker />
             {user ? (
               <>
                 <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>
