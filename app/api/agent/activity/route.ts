@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { authErrorResponse } from "@/lib/api";
 import { getActivityFeed, getPlatformStats } from "@/lib/data";
 import { requireApiRole } from "@/lib/permissions";
+import { STAFF_ROLES } from "@/lib/roles";
 import { toActivityDto } from "@/lib/serialize";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
  * Returns platform statistics plus the latest activity.
  */
 export async function GET() {
-  const auth = await requireApiRole(["AGENT", "ADMIN"]);
+  const auth = await requireApiRole(STAFF_ROLES);
   if (auth.error) return authErrorResponse(auth.error);
 
   const [stats, activity] = await Promise.all([getPlatformStats(), getActivityFeed()]);

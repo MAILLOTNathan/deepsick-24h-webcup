@@ -1,0 +1,61 @@
+import Link from "next/link";
+
+import { FeedRow, SectionHeader } from "@/components/colony/FeedRow";
+import { Button } from "@/components/ui/Button";
+import { markNotificationsReadAction } from "@/lib/actions/notifications";
+import { getNotifications } from "@/lib/data";
+import { formatDateTime } from "@/lib/format";
+import { requirePageRole } from "@/lib/permissions";
+
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Notifications" };
+
+export default async function CitizenNotificationsPage() {
+  const session = await requirePageRole(["CITIZEN"]);
+  const notifications = await getNotifications(session.user.id);
+  const unread = notifications.filter((notification) => !notification.read).length;
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-mono text-xl text-foreground">Centre de notifications</h1>
+          <p className="text-sm text-muted-foreground">{unread} non lue(s)</p>
+        </div>
+        {unread > 0 ? (
+          <form action={markNotificationsReadAction}>
+            <Button type="submit" variant="secondary" size="sm">
+              Tout marquer comme lu
+            </Button>
+          </form>
+        ) : null}
+      </div>
+
+      <SectionHeader title="Fil d'activité" />
+      {notifications.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          Aucune notification.
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {notifications.map((notification) => {
+            const row = (
+              <FeedRow
+                icon={notification.read ? "•" : "◉"}
+                title={notification.title}
+                meta={`${formatDateTime(notification.createdAt)}${notification.body ? ` · ${notification.body}` : ""}`}
+              />
+            );
+            return notification.href ? (
+              <Link key={notification.id} href={notification.href}>
+                {row}
+              </Link>
+            ) : (
+              <div key={notification.id}>{row}</div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

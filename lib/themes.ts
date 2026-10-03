@@ -37,7 +37,7 @@ export const THEMES: ThemeDefinition[] = [
   {
     id: "mars-civic",
     label: "Mars Civic OS",
-    description: "Console civique — orange Mars, cyan, vert",
+    description: "Console civique — le design ui-v1 (thème par défaut)",
     scheme: "dark",
     swatch: { background: "#0b0f19", card: "#111827", primary: "#f4a261", info: "#38bdf8" },
   },
@@ -94,7 +94,7 @@ export const THEMES: ThemeDefinition[] = [
 
 export const THEME_IDS = THEMES.map((theme) => theme.id);
 
-export const DEFAULT_THEME = "dark";
+export const DEFAULT_THEME = "mars-civic";
 
 export function getTheme(id?: string | null): ThemeDefinition | undefined {
   return THEMES.find((theme) => theme.id === id);

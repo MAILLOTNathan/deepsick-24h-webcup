@@ -1,8 +1,8 @@
-// Nova Terra — Prisma schema.
+// Terra Nova — Prisma schema.
 //
-// The competition docs describe enums, but SQLite (used for local dev) does not
-// support them. Enum-like fields are therefore plain strings, with the allowed
-// values + labels centralised in `lib/roles.ts` and validated server-side.
+// The docs describe enums, but SQLite (used for local dev) does not support
+// them. Enum-like fields are therefore plain strings, with the allowed values +
+// labels centralised in `lib/roles.ts` and validated server-side.
 
 generator client {
   provider = "prisma-client-js"
@@ -19,11 +19,21 @@ model User {
   email           String           @unique
   passwordHash    String?
   image           String?
-  role            String           @default("CITIZEN") // CITIZEN | AGENT | ADMIN
+  // CITIZEN | SECURITY | MEDIC | MAINTENANCE | DRIVER | MERCHANT | ADMIN_AGENT | COUNCIL
+  role            String           @default("CITIZEN")
+  sector          String?
+  balance         Int              @default(0) // fictional wallet, in credits
   requests        ServiceRequest[] @relation("RequestAuthor")
   assigned        ServiceRequest[] @relation("RequestAssignee")
   contactMessages ContactMessage[]
   announcements   Announcement[]
+  reports         Report[]         @relation("ReportAuthor")
+  assignedReports Report[]         @relation("ReportAssignee")
+  policeCases     PoliceCase[]     @relation("ArrestingOfficer")
+  orders          Order[]
+  notifications   Notification[]
+  transactions    WalletTransaction[]
+  messages        Message[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 }
@@ -98,4 +108,116 @@ model RequestStatusEvent {
   createdAt DateTime       @default(now())
 
   @@index([requestId])
+}
+
+// ------------------------------------------------------------------
+// Terra Nova ecosystem
+// ------------------------------------------------------------------
+
+// A citizen signalement routed to a service (security / medical /
+// maintenance / cleanliness) and worked through a status lifecycle.
+model Report {
+  id          String        @id @default(cuid())
+  reference   String        @unique @default(cuid())
+  type        String // SECURITY | MEDICAL | MAINTENANCE | CLEANLINESS
+  title       String
+  description String
+  priority    String        @default("NORMAL") // LOW | NORMAL | HIGH | CRITICAL
+  status      String        @default("OPEN") // OPEN | ASSIGNED | EN_ROUTE | IN_PROGRESS | RESOLVED | CLOSED
+  sector      String?
+  latitude    Float?
+  longitude   Float?
+  unit        String?
+  authorId    String
+  author      User          @relation("ReportAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  assigneeId  String?
+  assignee    User?         @relation("ReportAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  events      ReportEvent[]
+  policeCase  PoliceCase?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([type, status])
+  @@index([authorId])
+}
+
+model ReportEvent {
+  id        String   @id @default(cuid())
+  reportId  String
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  status    String
+  note      String?
+  actorId   String?
+  createdAt DateTime @default(now())
+
+  @@index([reportId])
+}
+
+// Security case opened from a SECURITY report (arrest + PV, simulated).
+model PoliceCase {
+  id          String   @id @default(cuid())
+  reportId    String   @unique
+  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  officerId   String
+  officer     User     @relation("ArrestingOfficer", fields: [officerId], references: [id])
+  suspectName String?
+  arrestNotes String?
+  fineAmount  Int?
+  pvContent   String?
+  status      String   @default("OPEN") // OPEN | FILED | CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Taxi rides and food orders (Mercator / Hermes).
+model Order {
+  id          String   @id @default(cuid())
+  reference   String   @unique @default(cuid())
+  type        String // TAXI | FOOD
+  status      String   @default("PENDING")
+  summary     String
+  total       Int      @default(0)
+  etaMinutes  Int?
+  origin      String?
+  destination String?
+  customerId  String
+  customer    User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  providerId  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type, status])
+}
+
+model WalletTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  amount    Int // positive = credit, negative = debit
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String?
+  href      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  channel   String
+  content   String
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }

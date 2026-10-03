@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { ACTIONABLE_STATUSES } from "@/lib/roles";
+import { ACTIONABLE_STATUSES, REPORT_ACTIONABLE } from "@/lib/roles";
 
 /* ------------------------------------------------------------------ *
  * Public content
@@ -175,3 +175,121 @@ export async function getActivityFeed(limit = 8): Promise<ActivityItem[]> {
 
   return items.sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, limit);
 }
+
+// ------------------------------------------------------------------
+// Terra Nova ecosystem — reports, orders, wallet, notifications
+// ------------------------------------------------------------------
+
+export function getReports(
+  filters: {
+    type?: string;
+    statuses?: readonly string[];
+    authorId?: string;
+    assigneeId?: string;
+  } = {},
+) {
+  const { type, statuses, authorId, assigneeId } = filters;
+  return prisma.report.findMany({
+    where: {
+      ...(type ? { type } : {}),
+      ...(statuses?.length ? { status: { in: [...statuses] } } : {}),
+      ...(authorId ? { authorId } : {}),
+      ...(assigneeId ? { assigneeId } : {}),
+    },
+    orderBy: [{ createdAt: "desc" }],
+    include: {
+      author: { select: { name: true, sector: true } },
+      assignee: { select: { name: true } },
+    },
+  });
+}
+
+export function getReportById(id: string) {
+  return prisma.report.findUnique({
+    where: { id },
+    include: {
+      author: { select: { id: true, name: true, email: true, sector: true } },
+      assignee: { select: { id: true, name: true } },
+      events: { orderBy: { createdAt: "asc" } },
+      policeCase: true,
+    },
+  });
+}
+
+export async function getReportStats(type?: string) {
+  const where = type ? { type } : {};
+  const [total, actionable, critical, resolved] = await Promise.all([
+    prisma.report.count({ where }),
+    prisma.report.count({ where: { ...where, status: { in: [...REPORT_ACTIONABLE] } } }),
+    prisma.report.count({
+      where: { ...where, priority: "CRITICAL", status: { in: [...REPORT_ACTIONABLE] } },
+    }),
+    prisma.report.count({ where: { ...where, status: { in: ["RESOLVED", "CLOSED"] } } }),
+  ]);
+  return { total, actionable, critical, resolved };
+}
+
+export function getOrders(
+  filters: { type?: string; customerId?: string; providerId?: string; statuses?: readonly string[] } = {},
+) {
+  const { type, customerId, providerId, statuses } = filters;
+  return prisma.order.findMany({
+    where: {
+      ...(type ? { type } : {}),
+      ...(customerId ? { customerId } : {}),
+      ...(providerId ? { providerId } : {}),
+      ...(statuses?.length ? { status: { in: [...statuses] } } : {}),
+    },
+    orderBy: [{ createdAt: "desc" }],
+    include: { customer: { select: { name: true, sector: true } } },
+  });
+}
+
+export function getOrderById(id: string) {
+  return prisma.order.findUnique({
+    where: { id },
+    include: { customer: { select: { name: true, email: true } } },
+  });
+}
+
+export async function getWallet(userId: string) {
+  const [user, transactions] = await Promise.all([
+    prisma.user.findUnique({ where: { id: userId }, select: { balance: true } }),
+    prisma.walletTransaction.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: 20 }),
+  ]);
+  return { balance: user?.balance ?? 0, transactions };
+}
+
+export function getNotifications(userId: string) {
+  return prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+}
+
+export function getUnreadNotificationCount(userId: string) {
+  return prisma.notification.count({ where: { userId, read: false } });
+}
+
+export function getMessages(channel: string) {
+  return prisma.message.findMany({
+    where: { channel },
+    orderBy: { createdAt: "asc" },
+    take: 30,
+    include: { sender: { select: { name: true, role: true } } },
+  });
+}
+
+export async function getCouncilStats() {
+  const [openReports, inProgress, services, announcements, users, orders] = await Promise.all([
+    prisma.report.count({ where: { status: "OPEN" } }),
+    prisma.report.count({ where: { status: { in: [...REPORT_ACTIONABLE] } } }),
+    prisma.municipalService.count({ where: { published: true } }),
+    prisma.announcement.count({ where: { published: true } }),
+    prisma.user.count(),
+    prisma.order.count(),
+  ]);
+  return { openReports, inProgress, services, announcements, users, orders };
+}
+

@@ -1,0 +1,135 @@
+import Link from "next/link";
+
+import { FeedRow, SectionHeader } from "@/components/colony/FeedRow";
+import { StatTile } from "@/components/colony/StatTile";
+import { Badge } from "@/components/ui/Badge";
+import { buttonClasses } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import {
+  OrderStatusBadge,
+  ReportPriorityBadge,
+  ReportStatusBadge,
+} from "@/components/ui/StatusBadge";
+import { colonySol, colonyTime, COLONY_POPULATION } from "@/lib/colony";
+import { getOrders, getReports } from "@/lib/data";
+import { requirePageRole } from "@/lib/permissions";
+import { CIVIC_SERVICES, REPORT_ACTIONABLE } from "@/lib/roles";
+
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Tableau de bord" };
+
+export default async function CitizenDashboardPage() {
+  const session = await requirePageRole(["CITIZEN"]);
+  const [reports, orders] = await Promise.all([
+    getReports({ authorId: session.user.id }),
+    getOrders({ customerId: session.user.id }),
+  ]);
+
+  const actionable = new Set<string>(REPORT_ACTIONABLE as readonly string[]);
+  const activeReports = reports.filter((report) => actionable.has(report.status));
+  const activeOrders = orders.filter(
+    (order) => order.status !== "COMPLETED" && order.status !== "CANCELLED",
+  );
+  const firstName = session.user.name?.split(" ")[0] ?? "colon";
+
+  return (
+    <div className="space-y-6">
+      <header>
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          Colon {session.user.id.slice(-6).toUpperCase()} · Statut actif
+        </p>
+        <div className="mt-1 flex items-center gap-2">
+          <h1 className="font-mono text-xl text-foreground">Bonsoir, {firstName}.</h1>
+          <Badge tone="info">Tier II</Badge>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-3 gap-3">
+        <StatTile label="Local" value={colonyTime()} hint={`Sol ${colonySol()}`} tone="primary" />
+        <StatTile label="Air hab." value="99.2%" hint="nominal" tone="info" />
+        <StatTile label="Radiation" value="0.18" hint="mSv · sûr" tone="success" />
+      </div>
+
+      <Card className="space-y-3">
+        <SectionHeader title="Prêt quand vous l'êtes" />
+        <div className="grid grid-cols-2 gap-2">
+          <Link href="/citizen/orders?type=TAXI" className={buttonClasses("secondary", "sm")}>
+            🚡 Appeler un rover
+          </Link>
+          <Link href="/citizen/orders?type=FOOD" className={buttonClasses("secondary", "sm")}>
+            🍜 Commander un repas
+          </Link>
+        </div>
+        <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          Population colonie · {COLONY_POPULATION} habitants
+        </p>
+      </Card>
+
+      <section>
+        <SectionHeader
+          title="Demandes actives"
+          badge={<Badge tone="warning">{activeReports.length + activeOrders.length} en cours</Badge>}
+          action={
+            <Link href="/citizen/reports" className="font-mono text-[11px] uppercase tracking-wide text-primary hover:underline">
+              Tout voir →
+            </Link>
+          }
+        />
+
+        {activeReports.length + activeOrders.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            Aucune demande active. Signalez un incident ou commandez un service.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {activeReports.slice(0, 3).map((report) => (
+              <Link key={report.id} href={`/citizen/reports/${report.id}`}>
+                <FeedRow
+                  title={`${report.reference} · ${report.title}`}
+                  meta={[report.sector, report.assignee?.name ? `Unité ${report.assignee.name}` : "En attente d'affectation"]
+                    .filter(Boolean)
+                    .join(" · ")}
+                  trailing={
+                    <div className="flex items-center gap-1.5">
+                      <ReportPriorityBadge priority={report.priority} />
+                      <ReportStatusBadge status={report.status} />
+                    </div>
+                  }
+                />
+              </Link>
+            ))}
+            {activeOrders.slice(0, 3).map((order) => (
+              <Link key={order.id} href="/citizen/orders">
+                <FeedRow
+                  icon={order.type === "TAXI" ? "🚡" : "🍜"}
+                  title={`${order.reference} · ${order.summary}`}
+                  meta={[order.etaMinutes ? `ETA ${order.etaMinutes} min` : null, `${order.total} crédits`]
+                    .filter(Boolean)
+                    .join(" · ")}
+                  trailing={<OrderStatusBadge status={order.status} />}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <SectionHeader title="Réseau civique · Services" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {CIVIC_SERVICES.map((service) => (
+            <Link key={service.key} href={service.href}>
+              <Card size="sm" className="h-full gap-1 p-3 transition hover:border-primary/50">
+                <span aria-hidden className="text-lg">
+                  {service.icon}
+                </span>
+                <p className="font-mono text-xs text-foreground">{service.label}</p>
+                <p className="text-[11px] leading-snug text-muted-foreground">{service.description}</p>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}

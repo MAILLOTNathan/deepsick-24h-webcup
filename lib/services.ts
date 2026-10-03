@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 import { slugify } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
-import { isRequestStatus, isRole, needsAction } from "@/lib/roles";
+import { isOrderStatus, isReportStatus, isRequestStatus, isRole, needsAction } from "@/lib/roles";
 
 /* ------------------------------------------------------------------ *
  * Accounts
@@ -199,4 +199,151 @@ export async function setAnnouncementPublished(id: string, published: boolean) {
     where: { id },
     data: { published, publishedAt: published ? new Date() : null },
   });
+}
+
+// ------------------------------------------------------------------
+// Terra Nova ecosystem — reports, police cases, orders, notifications
+// ------------------------------------------------------------------
+
+const REPORT_PREFIX: Record<string, string> = {
+  SECURITY: "INC",
+  MEDICAL: "MED",
+  MAINTENANCE: "MNT",
+  CLEANLINESS: "CLN",
+};
+
+export async function createReport(
+  authorId: string,
+  input: {
+    type: string;
+    title: string;
+    description: string;
+    priority: string;
+    sector?: string | null;
+  },
+) {
+  // Readable, design-style reference (INC-501, MED-502, …).
+  const prefix = REPORT_PREFIX[input.type] ?? "REQ";
+  const count = await prisma.report.count({ where: { type: input.type } });
+  const reference = `${prefix}-${500 + count + 1}`;
+
+  return prisma.report.create({
+    data: {
+      reference,
+      type: input.type,
+      title: input.title.trim(),
+      description: input.description.trim(),
+      priority: input.priority,
+      sector: input.sector?.trim() || null,
+      status: "OPEN",
+      authorId,
+      events: {
+        create: { status: "OPEN", note: "Signalement transmis par un colon.", actorId: authorId },
+      },
+    },
+  });
+}
+
+export async function assignReport(reportId: string, assigneeId: string) {
+  return prisma.report.update({
+    where: { id: reportId },
+    data: { assigneeId, status: "ASSIGNED" },
+  });
+}
+
+/** Move an incident forward and record the transition in its timeline. */
+export async function updateReportStatus(
+  reportId: string,
+  status: string,
+  actorId: string,
+  note?: string,
+) {
+  if (!isReportStatus(status)) throw new Error("Statut invalide.");
+
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.report.findUnique({ where: { id: reportId } });
+    if (!current) throw new Error("Incident introuvable.");
+
+    const updated = await tx.report.update({
+      where: { id: reportId },
+      data: { status, ...(current.assigneeId ? {} : { assigneeId: actorId }) },
+    });
+
+    await tx.reportEvent.create({
+      data: { reportId, status, note: note?.trim() || null, actorId },
+    });
+
+    return updated;
+  });
+}
+
+/** Open (or update) the simulated police case attached to a security report. */
+export async function filePoliceCase(
+  reportId: string,
+  officerId: string,
+  input: { suspectName?: string | null; arrestNotes?: string | null; fineAmount?: number | null; pvContent?: string | null },
+) {
+  return prisma.policeCase.upsert({
+    where: { reportId },
+    update: {
+      suspectName: input.suspectName?.trim() || null,
+      arrestNotes: input.arrestNotes?.trim() || null,
+      fineAmount: input.fineAmount ?? null,
+      pvContent: input.pvContent?.trim() || null,
+      status: "FILED",
+      officerId,
+    },
+    create: {
+      reportId,
+      officerId,
+      suspectName: input.suspectName?.trim() || null,
+      arrestNotes: input.arrestNotes?.trim() || null,
+      fineAmount: input.fineAmount ?? null,
+      pvContent: input.pvContent?.trim() || null,
+      status: "FILED",
+    },
+  });
+}
+
+export async function createOrder(
+  customerId: string,
+  input: {
+    type: string;
+    summary: string;
+    total?: number;
+    etaMinutes?: number | null;
+    origin?: string | null;
+    destination?: string | null;
+  },
+) {
+  return prisma.order.create({
+    data: {
+      type: input.type,
+      summary: input.summary.trim(),
+      total: input.total ?? 0,
+      etaMinutes: input.etaMinutes ?? null,
+      origin: input.origin ?? null,
+      destination: input.destination ?? null,
+      status: "PENDING",
+      customerId,
+    },
+  });
+}
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  if (!isOrderStatus(status)) throw new Error("Statut de commande invalide.");
+  return prisma.order.update({ where: { id: orderId }, data: { status } });
+}
+
+export async function pushNotification(
+  userId: string,
+  input: { title: string; body?: string; href?: string },
+) {
+  return prisma.notification.create({
+    data: { userId, title: input.title, body: input.body ?? null, href: input.href ?? null },
+  });
+}
+
+export async function markAllNotificationsRead(userId: string) {
+  return prisma.notification.updateMany({ where: { userId, read: false }, data: { read: true } });
 }
