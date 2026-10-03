@@ -1,3 +1,6 @@
+"use client";
+
+import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/ui";
 
 export type RadarBlip = { x: number; y: number; tone?: "info" | "danger" | "success" | "warning" };
@@ -26,6 +29,7 @@ export function RadarCard({
   blips?: RadarBlip[];
   className?: string;
 }) {
+  const t = useT();
   const dots =
     blips.length > 0
       ? blips
@@ -76,7 +80,7 @@ export function RadarCard({
       <div className="mt-3 flex items-center justify-between gap-2">
         <span className="truncate font-mono text-xs text-foreground">{label}</span>
         <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-          {locked ? "LOCKED" : "SCANNING"}
+          {locked ? t.common.locked : t.common.scanning}
         </span>
       </div>
       {caption ? (

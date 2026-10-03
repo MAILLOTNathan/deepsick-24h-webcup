@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { FeedRow, SectionHeader } from "@/components/colony/FeedRow";
 import { ServiceForm } from "@/components/colony/ServiceForm";
 import { Button } from "@/components/ui/Button";
@@ -5,33 +7,36 @@ import { Card } from "@/components/ui/Card";
 import { deleteServiceAction } from "@/lib/actions/admin";
 import { getAllServices } from "@/lib/data";
 import { formatDate } from "@/lib/format";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Services de la colonie" };
+
+export function generateMetadata(): Metadata {
+  return { title: getDictionary().council.services.title };
+}
 
 export default async function CouncilServicesPage() {
+  const t = getDictionary();
   await requirePageRole(["COUNCIL"]);
   const services = await getAllServices();
 
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="font-mono text-xl text-foreground">Services de la colonie</h1>
-        <p className="text-sm text-muted-foreground">
-          Gérez les services présentés aux colons dans le réseau civique.
-        </p>
+        <h1 className="font-mono text-xl text-foreground">{t.council.services.title}</h1>
+        <p className="text-sm text-muted-foreground">{t.council.services.subtitle}</p>
       </header>
 
       <div className="grid gap-5 lg:grid-cols-[1fr,1.3fr]">
         <Card className="p-4">
-          <SectionHeader title="Nouveau service" />
+          <SectionHeader title={t.council.services.new} />
           <ServiceForm />
         </Card>
 
         <section>
           <SectionHeader
-            title="Services existants"
+            title={t.council.services.existing}
             badge={<span className="font-mono text-[11px] text-muted-foreground">{services.length}</span>}
           />
           <div className="space-y-2">
@@ -47,7 +52,7 @@ export default async function CouncilServicesPage() {
                   <form action={deleteServiceAction}>
                     <input type="hidden" name="id" value={service.id} />
                     <Button type="submit" variant="danger" size="sm">
-                      Supprimer
+                      {t.council.services.remove}
                     </Button>
                   </form>
                 </div>

@@ -7,8 +7,10 @@ import { signOut } from "next-auth/react";
 import { Bell } from "lucide-react";
 
 import { StatusStrip } from "@/components/colony/StatusStrip";
+import { LocaleSwitcher } from "@/components/i18n/LocaleSwitcher";
 import { ThemePicker } from "@/components/layout/ThemePicker";
 import { buttonClasses } from "@/components/ui/Button";
+import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/ui";
 
 export type ConsoleNavItem = { href: string; label: string; icon?: string };
@@ -31,6 +33,7 @@ export function ConsoleShell({
   unread?: number;
   bellHref?: string;
 }) {
+  const t = useT();
   const pathname = usePathname();
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -50,13 +53,13 @@ export function ConsoleShell({
 
           <span className="ml-auto hidden items-center gap-1.5 rounded-full border border-[var(--chart-3)]/40 bg-[var(--chart-3)]/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--chart-3)] sm:inline-flex">
             <span className="inline-block size-1.5 rounded-full bg-[var(--chart-3)]" />
-            Colony nominal
+            {t.common.colonyNominal}
           </span>
 
           {bellHref ? (
             <Link
               href={bellHref}
-              aria-label="Notifications"
+              aria-label={t.nav.notifications}
               className={cn(buttonClasses("ghost", "sm"), "relative")}
             >
               <Bell className="size-4" />
@@ -68,6 +71,7 @@ export function ConsoleShell({
             </Link>
           ) : null}
 
+          <LocaleSwitcher />
           <ThemePicker />
 
           <button
@@ -75,7 +79,7 @@ export function ConsoleShell({
             onClick={() => signOut({ callbackUrl: "/" })}
             className={buttonClasses("ghost", "sm")}
           >
-            Quitter
+            {t.common.quit}
           </button>
         </div>
 

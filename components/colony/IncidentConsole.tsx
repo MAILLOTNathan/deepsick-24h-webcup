@@ -9,17 +9,12 @@ import { RadarCard } from "@/components/colony/RadarCard";
 import { StatTile } from "@/components/colony/StatTile";
 import { EmptyState } from "@/components/ui/Alert";
 import { ReportPriorityBadge, ReportStatusBadge } from "@/components/ui/StatusBadge";
+import { useT } from "@/lib/i18n/client";
+import { format } from "@/lib/i18n/format";
 import { REPORT_ACTIONABLE } from "@/lib/roles";
 import type { ReportRowDto } from "@/lib/serialize";
 
 type Chip = "ALL" | "CRITICAL" | "ACTION" | "DONE";
-
-const CHIPS: { key: Chip; label: string }[] = [
-  { key: "ALL", label: "Tous" },
-  { key: "CRITICAL", label: "Critiques" },
-  { key: "ACTION", label: "À traiter" },
-  { key: "DONE", label: "Résolus" },
-];
 
 /**
  * Live incident console shared by the security, medical and maintenance
@@ -38,6 +33,7 @@ export function IncidentConsole({
   reports: ReportRowDto[];
   detailBase: string;
 }) {
+  const t = useT();
   const [chip, setChip] = useState<Chip>("ACTION");
   const router = useRouter();
 
@@ -46,6 +42,13 @@ export function IncidentConsole({
     const interval = setInterval(() => router.refresh(), 5000);
     return () => clearInterval(interval);
   }, [router]);
+
+  const chips: { key: Chip; label: string }[] = [
+    { key: "ALL", label: t.ops.board.all },
+    { key: "CRITICAL", label: t.ops.board.critical },
+    { key: "ACTION", label: t.ops.board.action },
+    { key: "DONE", label: t.ops.board.done },
+  ];
 
   const actionable = useMemo(
     () => new Set<string>(REPORT_ACTIONABLE as readonly string[]),
@@ -93,7 +96,7 @@ export function IncidentConsole({
       </header>
 
       <div className="flex flex-wrap gap-2">
-        {CHIPS.map((item) => (
+        {chips.map((item) => (
           <button
             key={item.key}
             type="button"
@@ -110,26 +113,46 @@ export function IncidentConsole({
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile label="À traiter" value={counts.actionableTotal} hint={`${counts.open} ouverts`} tone="danger" />
-        <StatTile label="Critiques" value={counts.critical} hint="priorité maximale" tone="danger" />
-        <StatTile label="Engagés" value={counts.active} hint="en route / en cours" tone="info" />
-        <StatTile label="Résolus" value={counts.done} hint="ce cycle" tone="success" />
+        <StatTile
+          label={t.ops.board.action}
+          value={counts.actionableTotal}
+          hint={format(t.ops.board.openCount, { count: counts.open })}
+          tone="danger"
+        />
+        <StatTile
+          label={t.ops.board.critical}
+          value={counts.critical}
+          hint={t.ops.board.maxPriority}
+          tone="danger"
+        />
+        <StatTile
+          label={t.ops.board.engaged}
+          value={counts.active}
+          hint={t.ops.board.engagedHint}
+          tone="info"
+        />
+        <StatTile
+          label={t.ops.board.resolved}
+          value={counts.done}
+          hint={t.ops.board.thisCycle}
+          tone="success"
+        />
       </div>
 
       <RadarCard
-        label={`${station} · Secteur actif`}
-        caption="Balayage en direct · données simulées"
+        label={format(t.ops.board.sectorActive, { station })}
+        caption={t.common.simulatedData}
         blips={blips}
       />
 
       <section>
         <SectionHeader
-          title="Journal des incidents"
-          badge={<LiveBadge label={`${visible.length} actifs`} />}
+          title={t.ops.board.feed}
+          badge={<LiveBadge label={format(t.ops.board.activeCount, { count: visible.length })} />}
         />
 
         {visible.length === 0 ? (
-          <EmptyState title="Aucun incident sur ce filtre" description="Ajustez les filtres ci-dessus." />
+          <EmptyState title={t.ops.board.empty} description={t.ops.board.emptyHint} />
         ) : (
           <div className="space-y-2">
             {visible.map((report) => (
@@ -153,7 +176,7 @@ export function IncidentConsole({
       </section>
 
       <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-        Actualisation automatique toutes les 5 secondes
+        {t.common.updatedEvery5s}
       </p>
     </div>
   );

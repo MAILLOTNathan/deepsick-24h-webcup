@@ -7,8 +7,10 @@ import { StatTile } from "@/components/colony/StatTile";
 import { AiBadge, DifficultyBadge, TicketStatusBadge } from "@/components/dev/TicketBadges";
 import { EmptyState } from "@/components/ui/Alert";
 import { Card } from "@/components/ui/Card";
+import { useT } from "@/lib/i18n/client";
+import { format } from "@/lib/i18n/format";
 import type { TicketRowDto } from "@/lib/serialize";
-import { DIFFICULTIES, TICKET_STATUSES, TICKET_STATUS_LABELS } from "@/lib/ticket-status";
+import { DIFFICULTIES, TICKET_STATUSES } from "@/lib/ticket-status";
 import { cn } from "@/lib/ui";
 
 type View = "list" | "board";
@@ -40,6 +42,7 @@ function Chip({
 
 /** Ticketing view over the Webcup needs: stats, filters, list and board. */
 export function TicketBoard({ tickets }: { tickets: TicketRowDto[] }) {
+  const t = useT();
   const [view, setView] = useState<View>("list");
   const [status, setStatus] = useState<string>("ALL");
   const [difficulty, setDifficulty] = useState<string>("ALL");
@@ -76,24 +79,51 @@ export function TicketBoard({ tickets }: { tickets: TicketRowDto[] }) {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatTile label="Tickets" value={tickets.length} hint={`${counts.TODO} à faire`} tone="primary" />
-        <StatTile label="En cours" value={counts.IN_PROGRESS} hint={`${counts.BLOCKED} bloqué(s)`} tone="info" />
-        <StatTile label="À revoir" value={counts.REVIEW} hint="en attente de QA" tone="warning" />
-        <StatTile label="Terminés" value={counts.DONE} hint={`${doneRatio}%`} tone="success" />
-        <StatTile label="XP" value={`${xpDone}/${xpTotal}`} hint="gagnés / disponibles" tone="primary" />
+        <StatTile
+          label={t.dev.board.tickets}
+          value={tickets.length}
+          hint={format(t.dev.board.todoHint, { count: counts.TODO })}
+          tone="primary"
+        />
+        <StatTile
+          label={t.dev.board.inProgress}
+          value={counts.IN_PROGRESS}
+          hint={format(t.dev.board.blockedHint, { count: counts.BLOCKED })}
+          tone="info"
+        />
+        <StatTile
+          label={t.dev.board.review}
+          value={counts.REVIEW}
+          hint={t.dev.board.reviewHint}
+          tone="warning"
+        />
+        <StatTile
+          label={t.dev.board.done}
+          value={counts.DONE}
+          hint={`${doneRatio}%`}
+          tone="success"
+        />
+        <StatTile
+          label={t.dev.board.xp}
+          value={`${xpDone}/${xpTotal}`}
+          hint={t.dev.board.xpHint}
+          tone="primary"
+        />
       </div>
 
       <Card className="p-3">
         <div className="flex flex-wrap items-end gap-4">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">Statut</p>
+            <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+              {t.dev.board.status}
+            </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <Chip active={status === "ALL"} onClick={() => setStatus("ALL")}>
-                {`Tous (${tickets.length})`}
+                {format(t.dev.board.all, { count: tickets.length })}
               </Chip>
               {TICKET_STATUSES.map((value) => (
                 <Chip key={value} active={status === value} onClick={() => setStatus(value)}>
-                  {`${TICKET_STATUS_LABELS[value]} (${counts[value]})`}
+                  {`${t.ticketStatus[value]} (${counts[value]})`}
                 </Chip>
               ))}
             </div>
@@ -101,17 +131,17 @@ export function TicketBoard({ tickets }: { tickets: TicketRowDto[] }) {
 
           <div>
             <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-              Difficulté
+              {t.dev.board.difficulty}
             </p>
             <select
               value={difficulty}
               onChange={(event) => setDifficulty(event.target.value)}
               className="mt-2 h-8 rounded-md border border-input bg-transparent px-2 font-mono text-xs text-foreground"
             >
-              <option value="ALL">Toutes</option>
+              <option value="ALL">{t.dev.board.allDifficulties}</option>
               {DIFFICULTIES.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {(t.difficulty as Record<string, string>)[value] ?? value}
                 </option>
               ))}
             </select>
@@ -119,32 +149,29 @@ export function TicketBoard({ tickets }: { tickets: TicketRowDto[] }) {
 
           <div className="min-w-40 flex-1">
             <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-              Recherche
+              {t.dev.board.search}
             </p>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Code, titre, assigné…"
+              placeholder={t.dev.board.searchPlaceholder}
               className="mt-2 h-8 w-full rounded-md border border-input bg-transparent px-2 font-mono text-xs text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="flex gap-1 rounded-md border border-border p-1">
             <Chip active={view === "list"} onClick={() => setView("list")}>
-              Liste
+              {t.dev.board.list}
             </Chip>
             <Chip active={view === "board"} onClick={() => setView("board")}>
-              Tableau
+              {t.dev.board.boardView}
             </Chip>
           </div>
         </div>
       </Card>
 
       {visible.length === 0 ? (
-        <EmptyState
-          title="Aucun ticket sur ce filtre"
-          description="Ajustez les filtres ou synchronisez l'API Webcup."
-        />
+        <EmptyState title={t.dev.board.empty} description={t.dev.board.emptyHint} />
       ) : view === "list" ? (
         <div className="space-y-2">
           {visible.map((ticket) => (
@@ -157,8 +184,12 @@ export function TicketBoard({ tickets }: { tickets: TicketRowDto[] }) {
                     {[
                       ticket.group,
                       `${ticket.xp} XP`,
-                      ticket.assignee ? `→ ${ticket.assignee}` : "non assigné",
-                      ticket.commentCount ? `${ticket.commentCount} comm.` : null,
+                      ticket.assignee
+                        ? format(t.dev.board.assigned, { name: ticket.assignee })
+                        : t.dev.board.unassigned,
+                      ticket.commentCount
+                        ? format(t.dev.board.comments, { count: ticket.commentCount })
+                        : null,
                     ]
                       .filter(Boolean)
                       .join(" · ")}
@@ -180,11 +211,11 @@ export function TicketBoard({ tickets }: { tickets: TicketRowDto[] }) {
             return (
               <div key={column} className="space-y-2">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                  {TICKET_STATUS_LABELS[column]} · {items.length}
+                  {t.ticketStatus[column]} · {items.length}
                 </p>
                 {items.length === 0 ? (
                   <p className="rounded-md border border-dashed border-border p-3 text-center font-mono text-[10px] text-muted-foreground">
-                    vide
+                    {t.dev.board.columnEmpty}
                   </p>
                 ) : (
                   items.map((ticket) => (

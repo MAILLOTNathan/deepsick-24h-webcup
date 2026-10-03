@@ -7,18 +7,21 @@ import { Button } from "@/components/ui/Button";
 import { Field, Input } from "@/components/ui/Field";
 import { initialActionState } from "@/lib/action-state";
 import { createOrderAction } from "@/lib/actions/orders";
-import { ORDER_TYPE_LABELS, ORDER_TYPES } from "@/lib/roles";
+import { useT } from "@/lib/i18n/client";
+import { ORDER_TYPES } from "@/lib/roles";
 
 function SubmitButton() {
+  const t = useT();
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? "Envoi…" : "Confirmer la commande"}
+      {pending ? t.citizen.orders.submitting : t.citizen.orders.submit}
     </Button>
   );
 }
 
 export function OrderForm({ defaultType = "TAXI" }: { defaultType?: string }) {
+  const t = useT();
   const [state, formAction] = useFormState(createOrderAction, initialActionState);
 
   return (
@@ -27,7 +30,7 @@ export function OrderForm({ defaultType = "TAXI" }: { defaultType?: string }) {
 
       <fieldset className="space-y-2">
         <legend className="font-mono text-xs uppercase tracking-wide text-foreground">
-          Type de commande
+          {t.citizen.orders.type}
         </legend>
         <div className="grid grid-cols-2 gap-2">
           {ORDER_TYPES.map((type) => (
@@ -43,23 +46,32 @@ export function OrderForm({ defaultType = "TAXI" }: { defaultType?: string }) {
                 className="accent-primary"
               />
               <span className="font-mono text-xs uppercase tracking-wide text-foreground">
-                {type === "TAXI" ? "🚡 Course" : "🍜 Repas"}
+                {type === "TAXI" ? `🚡 ${t.orderType.TAXI}` : `🍜 ${t.orderType.FOOD}`}
               </span>
             </label>
           ))}
         </div>
       </fieldset>
 
-      <Field label="Résumé" htmlFor="summary">
-        <Input id="summary" name="summary" required placeholder="Ex. Rover TX-22 · Habitat 07 → BioDôme 03" />
+      <Field label={t.citizen.orders.summary} htmlFor="summary">
+        <Input
+          id="summary"
+          name="summary"
+          required
+          placeholder={t.citizen.orders.summaryPlaceholder}
+        />
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Départ" htmlFor="origin">
-          <Input id="origin" name="origin" placeholder="Ex. Habitat 07" />
+        <Field label={t.citizen.orders.origin} htmlFor="origin">
+          <Input id="origin" name="origin" placeholder={t.citizen.orders.originPlaceholder} />
         </Field>
-        <Field label="Destination" htmlFor="destination">
-          <Input id="destination" name="destination" placeholder="Ex. BioDôme 03" />
+        <Field label={t.citizen.orders.destination} htmlFor="destination">
+          <Input
+            id="destination"
+            name="destination"
+            placeholder={t.citizen.orders.destinationPlaceholder}
+          />
         </Field>
       </div>
 

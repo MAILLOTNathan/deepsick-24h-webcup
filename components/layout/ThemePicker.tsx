@@ -13,41 +13,48 @@ import {
   DropdownMenuTrigger,
 } from "@/components/shadcn/dropdown-menu";
 import { buttonClasses } from "@/components/ui/Button";
+import { useT } from "@/lib/i18n/client";
 import { THEMES } from "@/lib/themes";
 import { cn } from "@/lib/ui";
 
 /** Compact theme chooser for headers and shells. */
 export function ThemePicker({ className }: { className?: string }) {
+  const t = useT();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
   const active = mounted ? theme : undefined;
+  const copy = t.themes as Record<string, { label: string; description: string }>;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label="Choisir un thème"
+          aria-label={t.common.theme}
           className={buttonClasses("ghost", "sm", className)}
         >
           <Palette data-icon="inline-start" />
-          <span className="sr-only">Choisir un thème</span>
+          <span className="sr-only">{t.common.theme}</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
         <DropdownMenuLabel className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
-          Thème de l&apos;interface
+          {t.common.theme}
         </DropdownMenuLabel>
         <DropdownMenuItem onSelect={() => setTheme("system")} className="gap-3">
           <Monitor className="size-4 shrink-0 text-muted-foreground" />
-          <span className="flex-1 text-sm">Système</span>
+          <span className="flex-1 text-sm">{t.common.system}</span>
           {active === "system" ? <Check className="size-4 shrink-0" /> : null}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         {THEMES.map((candidate) => {
           const isActive = active === candidate.id;
+          const item = copy[candidate.id] ?? {
+            label: candidate.label,
+            description: candidate.description,
+          };
           return (
             <DropdownMenuItem
               key={candidate.id}
@@ -62,9 +69,9 @@ export function ThemePicker({ className }: { className?: string }) {
                 <span className="h-full w-1/2" style={{ background: candidate.swatch.primary }} />
               </span>
               <span className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-sm">{candidate.label}</span>
+                <span className="truncate text-sm">{item.label}</span>
                 <span className="truncate text-[11px] text-muted-foreground">
-                  {candidate.description}
+                  {item.description}
                 </span>
               </span>
               {isActive ? <Check className="size-4 shrink-0" /> : null}

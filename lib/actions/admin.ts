@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import type { AdminActionState } from "@/lib/action-state";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 import {
   createAnnouncement,
@@ -31,12 +32,12 @@ export async function createServiceAction(
   try {
     await createMunicipalService(parsed.data);
   } catch {
-    return { ok: false, message: "Le service n'a pas pu être créé." };
+    return { ok: false, message: getDictionary().errors.serviceFailed };
   }
 
   revalidatePath("/council/services");
   revalidatePath("/services");
-  return { ok: true, message: "Service créé." };
+  return { ok: true, message: getDictionary().council.services.form.created };
 }
 
 export async function deleteServiceAction(formData: FormData) {
@@ -65,12 +66,12 @@ export async function createAnnouncementAction(
   try {
     await createAnnouncement({ ...parsed.data, authorId: session.user.id });
   } catch {
-    return { ok: false, message: "L'annonce n'a pas pu être créée." };
+    return { ok: false, message: getDictionary().errors.announcementFailed };
   }
 
   revalidatePath("/council/announcements");
   revalidatePath("/announcements");
-  return { ok: true, message: "Annonce créée." };
+  return { ok: true, message: getDictionary().council.announcements.form.created };
 }
 
 export async function toggleAnnouncementAction(formData: FormData) {

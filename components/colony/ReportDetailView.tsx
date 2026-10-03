@@ -8,8 +8,9 @@ import { Card } from "@/components/ui/Card";
 import { ReportPriorityBadge, ReportStatusBadge } from "@/components/ui/StatusBadge";
 import { getReportById } from "@/lib/data";
 import { formatDateTime } from "@/lib/format";
+import { format, getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
-import { REPORT_TYPE_LABELS, REPORT_TYPE_ROLE, isReportType } from "@/lib/roles";
+import { REPORT_TYPE_ROLE, isReportType } from "@/lib/roles";
 
 type Station = "security" | "medical" | "maintenance";
 
@@ -22,6 +23,7 @@ const STATION_FOR_TYPE: Record<string, Station> = {
 
 /** Incident detail with the service action panel (take charge, update, PV). */
 export async function ReportDetailView({ id }: { id: string }) {
+  const t = getDictionary();
   const report = await getReportById(id);
   if (!report) notFound();
 
@@ -39,13 +41,12 @@ export async function ReportDetailView({ id }: { id: string }) {
         href={`/operations/${station}`}
         className="font-mono text-[11px] uppercase tracking-wide text-primary hover:underline"
       >
-        ← Console
+        {t.ops.detail.back}
       </Link>
 
       <header>
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-          {report.reference} ·{" "}
-          {isReportType(report.type) ? REPORT_TYPE_LABELS[report.type] : report.type}
+          {report.reference} · {isReportType(report.type) ? t.reportType[report.type] : report.type}
         </p>
         <h1 className="mt-1 font-mono text-xl text-foreground">{report.title}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -53,7 +54,7 @@ export async function ReportDetailView({ id }: { id: string }) {
           <ReportPriorityBadge priority={report.priority} />
           {report.unit ? (
             <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-              Unité {report.unit}
+              {format(t.ops.forms.unitLabel, { name: report.unit })}
             </span>
           ) : null}
         </div>
@@ -62,26 +63,30 @@ export async function ReportDetailView({ id }: { id: string }) {
       <div className="grid gap-4 lg:grid-cols-[1.2fr,1fr]">
         <div className="space-y-4">
           <RadarCard
-            label={report.sector ?? "Secteur inconnu"}
-            caption={`${report.reference} · ${report.assignee?.name ?? "non affecté"}`}
+            label={report.sector ?? t.citizen.reports.unknownSector}
+            caption={`${report.reference} · ${report.assignee?.name ?? t.common.unassigned}`}
             locked={report.status === "EN_ROUTE" || report.status === "IN_PROGRESS"}
           />
 
           <Card className="p-4">
-            <SectionHeader title="Signalement du colon" />
+            <SectionHeader title={t.ops.detail.colonReport} />
             <p className="whitespace-pre-line text-sm text-foreground">{report.description}</p>
             <div className="mt-3 grid grid-cols-2 gap-2 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-              <span>Auteur · {report.author?.name ?? "—"}</span>
-              <span>Secteur · {report.sector ?? "—"}</span>
-              <span>Ouvert · {formatDateTime(report.createdAt)}</span>
-              <span>Unité · {report.assignee?.name ?? "non affectée"}</span>
+              <span>{format(t.ops.detail.author, { name: report.author?.name ?? t.common.none })}</span>
+              <span>{format(t.ops.detail.sector, { name: report.sector ?? t.common.none })}</span>
+              <span>{format(t.ops.detail.opened, { date: formatDateTime(report.createdAt) })}</span>
+              <span>
+                {format(t.ops.detail.unit, {
+                  name: report.assignee?.name ?? t.citizen.reports.noUnit,
+                })}
+              </span>
             </div>
           </Card>
         </div>
 
         <div className="space-y-4">
           <Card className="p-4">
-            <SectionHeader title="Traitement" />
+            <SectionHeader title={t.ops.detail.processing} />
             <ReportStatusForm reportId={report.id} status={report.status} />
             <div className="mt-4 border-t border-border pt-3">
               <ReportAssignButton reportId={report.id} assigneeName={report.assignee?.name} />
@@ -91,7 +96,7 @@ export async function ReportDetailView({ id }: { id: string }) {
           {canFileCase ? (
             <Card className="p-4">
               <SectionHeader
-                title="Arrestation & PV"
+                title={t.ops.detail.arrest}
                 badge={report.policeCase ? <ReportStatusBadge status="CLOSED" /> : null}
               />
               <PoliceCaseForm reportId={report.id} existing={report.policeCase} />
@@ -99,7 +104,7 @@ export async function ReportDetailView({ id }: { id: string }) {
           ) : null}
 
           <Card className="p-4">
-            <SectionHeader title="Chronologie" />
+            <SectionHeader title={t.ops.detail.timeline} />
             <ol className="space-y-3">
               {report.events.map((event) => (
                 <li key={event.id} className="border-l border-border pl-3">

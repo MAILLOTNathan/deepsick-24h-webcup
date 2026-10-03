@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { ActionState } from "@/lib/action-state";
+import { getDictionary } from "@/lib/i18n/server";
 import { getAuthSession } from "@/lib/permissions";
 import { createServiceRequest } from "@/lib/services";
 import { firstError, requestSchema } from "@/lib/validation";
@@ -14,7 +15,7 @@ export async function createRequestAction(
 ): Promise<ActionState> {
   const session = await getAuthSession();
   if (!session) {
-    return { ok: false, message: "Vous devez être connecté pour créer une demande." };
+    return { ok: false, message: getDictionary().errors.notConnected };
   }
 
   const parsed = requestSchema.safeParse({
@@ -31,7 +32,7 @@ export async function createRequestAction(
   try {
     await createServiceRequest(session.user.id, parsed.data);
   } catch {
-    return { ok: false, message: "La demande n'a pas pu être enregistrée." };
+    return { ok: false, message: getDictionary().errors.requestFailed };
   }
 
   revalidatePath("/demandes");

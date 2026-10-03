@@ -4,20 +4,24 @@ import "./globals.css";
 import { Toaster } from "@/components/shadcn/sonner";
 import { TooltipProvider } from "@/components/shadcn/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LocaleProvider } from "@/lib/i18n/client";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { DEFAULT_THEME, THEME_IDS } from "@/lib/themes";
 
-export const metadata: Metadata = {
-  title: {
-    default: "Nova Terra — Plateforme citoyenne",
-    template: "%s · Nova Terra",
-  },
-  description:
-    "Plateforme des services municipaux de la ville de Nova Terra : démarches, annonces et suivi des demandes.",
-};
+export function generateMetadata(): Metadata {
+  const t = getDictionary();
+  return {
+    title: { default: t.meta.title, template: `%s · ${t.common.appName}` },
+    description: t.meta.description,
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = getLocale();
+  const dictionary = getDictionary(locale);
+
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"
@@ -28,10 +32,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
           storageKey="nt-theme"
         >
-          <TooltipProvider>
-            {children}
-            <Toaster />
-          </TooltipProvider>
+          <LocaleProvider locale={locale} dictionary={dictionary}>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>

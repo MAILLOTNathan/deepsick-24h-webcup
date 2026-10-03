@@ -1,21 +1,19 @@
 import { ConsoleShell } from "@/components/colony/ConsoleShell";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
 
-const NAV = [
-  { href: "/council", label: "Vue d'ensemble", icon: "🛰️" },
-  { href: "/council/users", label: "Comptes", icon: "👥" },
-  { href: "/council/announcements", label: "Annonces", icon: "📣" },
-  { href: "/council/services", label: "Services", icon: "🏛️" },
-];
-
 export default async function CouncilLayout({ children }: { children: React.ReactNode }) {
+  const t = getDictionary();
   await requirePageRole(["COUNCIL"]);
 
-  return (
-    <ConsoleShell station="HAUT CONSEIL DE NOVA TERRA" nav={NAV}>
-      {children}
-    </ConsoleShell>
-  );
+  const nav = [
+    { href: "/council", label: t.council.nav.overview, icon: "🛰️" },
+    { href: "/council/users", label: t.council.nav.users, icon: "👥" },
+    { href: "/council/announcements", label: t.council.nav.announcements, icon: "📣" },
+    { href: "/council/services", label: t.council.nav.services, icon: "🏛️" },
+  ];
+
+  return <ConsoleShell station={t.council.station} nav={nav}>{children}</ConsoleShell>;
 }

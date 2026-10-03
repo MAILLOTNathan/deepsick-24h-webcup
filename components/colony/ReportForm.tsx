@@ -7,24 +7,21 @@ import { Button } from "@/components/ui/Button";
 import { Field, Input, Select, Textarea } from "@/components/ui/Field";
 import { initialActionState } from "@/lib/action-state";
 import { createReportAction } from "@/lib/actions/reports";
-import {
-  COLONY_SECTORS,
-  REPORT_PRIORITIES,
-  REPORT_PRIORITY_LABELS,
-  REPORT_TYPES,
-  REPORT_TYPE_LABELS,
-} from "@/lib/roles";
+import { useT } from "@/lib/i18n/client";
+import { COLONY_SECTORS, REPORT_PRIORITIES, REPORT_TYPES } from "@/lib/roles";
 
 function SubmitButton() {
+  const t = useT();
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? "Transmission…" : "Transmettre le signalement"}
+      {pending ? t.citizen.report.submitting : t.citizen.report.submit}
     </Button>
   );
 }
 
 export function ReportForm({ defaultType = "SECURITY" }: { defaultType?: string }) {
+  const t = useT();
   const [state, formAction] = useFormState(createReportAction, initialActionState);
 
   return (
@@ -33,7 +30,7 @@ export function ReportForm({ defaultType = "SECURITY" }: { defaultType?: string 
 
       <fieldset className="space-y-2">
         <legend className="font-mono text-xs uppercase tracking-wide text-foreground">
-          Service concerné
+          {t.citizen.report.service}
         </legend>
         <div className="grid grid-cols-2 gap-2">
           {REPORT_TYPES.map((type) => (
@@ -49,31 +46,37 @@ export function ReportForm({ defaultType = "SECURITY" }: { defaultType?: string 
                 className="accent-primary"
               />
               <span className="font-mono text-xs uppercase tracking-wide text-foreground">
-                {REPORT_TYPE_LABELS[type]}
+                {t.reportType[type]}
               </span>
             </label>
           ))}
         </div>
       </fieldset>
 
-      <Field label="Objet" htmlFor="title">
-        <Input id="title" name="title" required maxLength={120} placeholder="Ex. Alerte intrusion airlock" />
+      <Field label={t.citizen.report.subject} htmlFor="title">
+        <Input
+          id="title"
+          name="title"
+          required
+          maxLength={120}
+          placeholder={t.citizen.report.subjectPlaceholder}
+        />
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Priorité" htmlFor="priority">
+        <Field label={t.citizen.report.priority} htmlFor="priority">
           <Select id="priority" name="priority" defaultValue="NORMAL">
             {REPORT_PRIORITIES.map((priority) => (
               <option key={priority} value={priority}>
-                {REPORT_PRIORITY_LABELS[priority]}
+                {t.reportPriority[priority]}
               </option>
             ))}
           </Select>
         </Field>
 
-        <Field label="Secteur" htmlFor="sector">
+        <Field label={t.citizen.report.sector} htmlFor="sector">
           <Select id="sector" name="sector" defaultValue="">
-            <option value="">— Localisation inconnue —</option>
+            <option value="">{t.citizen.report.unknownSector}</option>
             {COLONY_SECTORS.map((sector) => (
               <option key={sector} value={sector}>
                 {sector}
@@ -83,13 +86,13 @@ export function ReportForm({ defaultType = "SECURITY" }: { defaultType?: string 
         </Field>
       </div>
 
-      <Field label="Description" htmlFor="description">
+      <Field label={t.citizen.report.description} htmlFor="description">
         <Textarea
           id="description"
           name="description"
           required
           minLength={10}
-          placeholder="Décrivez la situation, le lieu précis et les personnes impliquées."
+          placeholder={t.citizen.report.descriptionPlaceholder}
         />
       </Field>
 

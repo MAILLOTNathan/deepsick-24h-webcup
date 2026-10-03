@@ -128,7 +128,8 @@ Full schema: [`prisma/schema.prisma`](../prisma/schema.prisma).
   pill, mono labels, metric tiles, radar card, filter chips and live feed rows
   (`components/colony/*`).
 - **Typography:** `font-mono` for headings and figures, `font-sans` for body copy.
-- **Copy:** user-facing text is **French**; code, comments and docs are **English**.
+- **Copy:** user-facing text is **localized** (French, English, Spanish); code, comments and docs are
+  **English**.
 
 ### Themes
 
@@ -150,13 +151,43 @@ Ten selectable themes applied by `next-themes` as a class on `<html>`:
 - Registry: [`lib/themes.ts`](../lib/themes.ts); token blocks: one class per theme in `app/globals.css`.
 - Provider: `app/layout.tsx` (`attribute="class"`, `themes={THEME_IDS}`, `storageKey="nt-theme"`).
 - Pickers: palette icon in the headers + the gallery at `/apparence`.
+- Labels and descriptions are translated too: `THEMES` holds the ids/swatches, the copy comes from
+  `t.themes[id]` (with the registry text as fallback).
 
 **Adding a theme:** add a `.<id> { …tokens… }` block in `globals.css`, register it in `THEMES`
-(`lib/themes.ts`), and — if dark — add `.<id> *` to the `@custom-variant dark (…)` list.
+(`lib/themes.ts`), add its label/description to the three dictionaries, and — if dark — add
+`.<id> *` to the `@custom-variant dark (…)` list.
+
+### Internationalization
+
+Three locales: **fr** (default), **en**, **es**.
+
+| Piece | File |
+| --- | --- |
+| Locale list, cookie name, labels | `lib/i18n/config.ts` (`nt-locale`, `LOCALE_LABELS`) |
+| Reference dictionary | `lib/i18n/dictionaries/fr.ts` |
+| Translations | `lib/i18n/dictionaries/en.ts`, `es.ts` — typed `Dictionary = typeof fr` |
+| Server helpers | `lib/i18n/server.ts` — `getLocale()`, `getDictionary()`, `format()` |
+| Client helpers | `lib/i18n/client.tsx` — `LocaleProvider`, `useLocale()`, `useT()` |
+| `{placeholder}` interpolation | `lib/i18n/format.ts` (shared server/client) |
+| Switcher | `components/i18n/LocaleSwitcher.tsx` (header + footer) |
+| Locale-aware dates | `lib/format.ts` (`fr-FR` / `en-US` / `es-ES`) |
+
+- **No URL prefix.** The locale lives in a cookie, so the French route segments (`/espace`,
+  `/demandes`) and `middleware.ts` guards are untouched; a switch triggers `router.refresh()`.
+- **Provider:** `app/layout.tsx` reads the cookie, sets `<html lang>`, resolves the dictionary and
+  wraps the tree in `LocaleProvider` — client components then read copy synchronously via `useT()`.
+- **Server actions** build their user-facing messages from the dictionary too
+  (`lib/actions/*.ts`), so validation/errors follow the active locale.
+- **Not translated on purpose:** in-world proper nouns (Terra Nova, Ares Security Command,
+  Asclepius, Hephaestus, Hermes, Mercator, ARC-01 · UTOPIA PLANITIA, BicDôme) and seeded database
+  content, which is stored in the language it was authored in.
+- **Adding a locale:** add it to `LOCALES`/`LOCALE_LABELS` (`config.ts`), copy `fr.ts`, translate,
+  then register the dictionary in `DICTIONARIES` (`server.ts`). Missing keys are a type error.
 
 ## 9. Conventions
 
-- French URL segments and copy for user-facing routes.
+- French URL segments; **copy is localized** (see § 8 — Internationalization).
 - Server-side validation on every mutation (Zod in `lib/validation.ts`).
 - Seed a fresh database with one account per role and believable colony data.
 - Simulate everything risky: payments, GPS, medical data, arrests and PV are fictional.

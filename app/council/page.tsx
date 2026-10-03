@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { FeedRow, SectionHeader } from "@/components/colony/FeedRow";
@@ -6,13 +7,18 @@ import { Card } from "@/components/ui/Card";
 import { ReportStatusBadge } from "@/components/ui/StatusBadge";
 import { getCouncilStats, getReports } from "@/lib/data";
 import { formatDate } from "@/lib/format";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
-import { REPORT_TYPE_LABELS, isReportType } from "@/lib/roles";
+import { isReportType } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Haut Conseil" };
+
+export function generateMetadata(): Metadata {
+  return { title: getDictionary().council.nav.overview };
+}
 
 export default async function CouncilPage() {
+  const t = getDictionary();
   await requirePageRole(["COUNCIL"]);
   const [stats, reports] = await Promise.all([getCouncilStats(), getReports()]);
 
@@ -27,30 +33,58 @@ export default async function CouncilPage() {
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
           PILOTAGE · TERRA NOVA
         </p>
-        <h1 className="mt-1 font-mono text-xl text-foreground">Vue d'ensemble de la colonie</h1>
-        <p className="text-sm text-muted-foreground">
-          Incidents, interventions, services et activité économique simulée.
-        </p>
+        <h1 className="mt-1 font-mono text-xl text-foreground">{t.council.overview.title}</h1>
+        <p className="text-sm text-muted-foreground">{t.council.overview.subtitle}</p>
       </header>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <StatTile label="Ouverts" value={stats.openReports} hint="signalements" tone="danger" />
-        <StatTile label="En cours" value={stats.inProgress} hint="interventions" tone="info" />
-        <StatTile label="Services" value={stats.services} hint="publiés" tone="primary" />
-        <StatTile label="Annonces" value={stats.announcements} hint="publiées" tone="primary" />
-        <StatTile label="Colons" value={stats.users} hint="comptes" tone="success" />
-        <StatTile label="Commandes" value={stats.orders} hint="taxi + repas" tone="warning" />
+        <StatTile
+          label={t.council.overview.open}
+          value={stats.openReports}
+          hint={t.council.overview.openHint}
+          tone="danger"
+        />
+        <StatTile
+          label={t.council.overview.inProgress}
+          value={stats.inProgress}
+          hint={t.council.overview.inProgressHint}
+          tone="info"
+        />
+        <StatTile
+          label={t.council.overview.services}
+          value={stats.services}
+          hint={t.council.overview.servicesHint}
+          tone="primary"
+        />
+        <StatTile
+          label={t.council.overview.announcements}
+          value={stats.announcements}
+          hint={t.council.overview.announcementsHint}
+          tone="primary"
+        />
+        <StatTile
+          label={t.council.overview.users}
+          value={stats.users}
+          hint={t.council.overview.usersHint}
+          tone="success"
+        />
+        <StatTile
+          label={t.council.overview.orders}
+          value={stats.orders}
+          hint={t.council.overview.ordersHint}
+          tone="warning"
+        />
       </div>
 
       <Card className="p-4">
-        <SectionHeader title="Répartition par service" />
+        <SectionHeader title={t.council.overview.breakdown} />
         <div className="flex flex-wrap gap-2">
           {Object.entries(byType).map(([type, count]) => (
             <span
               key={type}
               className="rounded-md border border-border px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide text-foreground"
             >
-              {isReportType(type) ? REPORT_TYPE_LABELS[type] : type} · {count}
+              {isReportType(type) ? t.reportType[type] : type} · {count}
             </span>
           ))}
         </div>
@@ -58,10 +92,10 @@ export default async function CouncilPage() {
 
       <section>
         <SectionHeader
-          title="Signalements récents"
+          title={t.council.overview.recent}
           action={
             <Link href="/council/users" className="font-mono text-[11px] uppercase tracking-wide text-primary hover:underline">
-              Gérer les comptes →
+              {t.council.overview.manageUsers}
             </Link>
           }
         />
@@ -80,13 +114,11 @@ export default async function CouncilPage() {
       </section>
 
       <section>
-        <SectionHeader title="Outils développeur" />
+        <SectionHeader title={t.council.overview.devTools} />
         <Link href="/dev/tickets">
           <Card size="sm" className="gap-1 p-4 transition hover:border-primary/50">
-            <p className="font-mono text-sm text-foreground">🎫 Panneau des tickets Webcup</p>
-            <p className="text-xs text-muted-foreground">
-              Suivre les besoins publiés par l'API, les assigner et synchroniser les vagues.
-            </p>
+            <p className="font-mono text-sm text-foreground">{t.council.overview.devPanel}</p>
+            <p className="text-xs text-muted-foreground">{t.council.overview.devPanelHint}</p>
           </Card>
         </Link>
       </section>

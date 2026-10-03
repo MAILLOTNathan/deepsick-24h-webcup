@@ -1,13 +1,27 @@
-export function formatDate(date: Date | string | null | undefined): string {
-  if (!date) return "—";
-  const value = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" }).format(value);
+import type { Locale } from "@/lib/i18n/config";
+import { getLocale } from "@/lib/i18n/server";
+
+const INTL_LOCALES: Record<Locale, string> = {
+  fr: "fr-FR",
+  en: "en-US",
+  es: "es-ES",
+};
+
+/** Intl locale tag for the active locale (server components only). */
+function intlLocale(locale?: Locale): string {
+  return INTL_LOCALES[locale ?? getLocale()] ?? "fr-FR";
 }
 
-export function formatDateTime(date: Date | string | null | undefined): string {
+export function formatDate(date: Date | string | null | undefined, locale?: Locale): string {
   if (!date) return "—";
   const value = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("fr-FR", {
+  return new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "long" }).format(value);
+}
+
+export function formatDateTime(date: Date | string | null | undefined, locale?: Locale): string {
+  if (!date) return "—";
+  const value = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(value);
