@@ -101,7 +101,11 @@ See the target folder layout in [`AGENTS.md`](../AGENTS.md#-project-structure).
 
 ## 6. Data model (overview)
 
-Full schema: see [`AGENTS.md`](../AGENTS.md#-prisma-schema).
+Full schema: see [`AGENTS.md`](../AGENTS.md#-prisma-schema) and [`prisma/schema.prisma`](../prisma/schema.prisma).
+
+> **SQLite note:** the schema runs on SQLite for local dev, which does not support Prisma enums, so
+> enum-like fields (`role`, `status`, `priority`, `status`) are stored as strings. The allowed values
+> and their French labels live in [`lib/roles.ts`](../lib/roles.ts) and are validated server-side.
 
 - `User` — one role (`CITIZEN` / `AGENT` / `ADMIN`), credentials + relations
 - `MunicipalService` — `D05` directory entries
@@ -151,6 +155,6 @@ SUBMITTED → IN_REVIEW → IN_PROGRESS → RESOLVED → CLOSED
 
 ## 11. Open questions
 
-- **“Nova Terra API” (`D19`):** confirm with the organisers whether this is an API provided by the
-  event or our own `/api/agent/*` surface exposing platform activity. Until confirmed, treat it as the
-  app's own read API consumed by the agent workspace.
+- **“Nova Terra API” (`D19`):** until the organisers confirm a dedicated endpoint, the agent workspace
+  consumes the app's own read API. It is implemented as `GET /api/agent/activity`, which returns the
+  platform statistics plus the latest activity (requests, contact messages, announcements).

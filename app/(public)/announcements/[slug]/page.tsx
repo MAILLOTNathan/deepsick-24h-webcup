@@ -1,0 +1,44 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { getAnnouncementBySlug } from "@/lib/data";
+import { formatDate } from "@/lib/format";
+
+export const dynamic = "force-dynamic";
+
+type Params = { params: { slug: string } };
+
+export async function generateMetadata({ params }: Params) {
+  const announcement = await getAnnouncementBySlug(params.slug);
+  return { title: announcement?.title ?? "Annonce municipale" };
+}
+
+export default async function AnnouncementDetailPage({ params }: Params) {
+  const announcement = await getAnnouncementBySlug(params.slug);
+  if (!announcement || !announcement.published) notFound();
+
+  return (
+    <article className="mx-auto max-w-3xl px-4 py-10">
+      <Link href="/announcements" className="text-sm text-mars hover:underline">
+        ← Toutes les annonces
+      </Link>
+
+      <header className="mt-6">
+        <p className="font-mono text-xs uppercase tracking-wide text-slate-500">
+          {formatDate(announcement.publishedAt ?? announcement.createdAt)}
+          {announcement.author?.name ? ` · ${announcement.author.name}` : ""}
+        </p>
+        <h1 className="mt-2 font-mono text-3xl leading-tight text-slate-50">
+          {announcement.title}
+        </h1>
+        {announcement.excerpt ? (
+          <p className="mt-4 text-lg text-slate-300">{announcement.excerpt}</p>
+        ) : null}
+      </header>
+
+      <div className="mt-8 whitespace-pre-line leading-relaxed text-slate-300">
+        {announcement.body}
+      </div>
+    </article>
+  );
+}

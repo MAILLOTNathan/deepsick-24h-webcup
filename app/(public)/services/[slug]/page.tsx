@@ -1,0 +1,75 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { buttonClasses } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { getPublishedServices, getServiceBySlug } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
+
+type Params = { params: { slug: string } };
+
+export async function generateMetadata({ params }: Params) {
+  const service = await getServiceBySlug(params.slug);
+  return { title: service?.name ?? "Service municipal" };
+}
+
+export default async function ServiceDetailPage({ params }: Params) {
+  const service = await getServiceBySlug(params.slug);
+  if (!service || !service.published) notFound();
+
+  const otherServices = (await getPublishedServices())
+    .filter((item) => item.id !== service.id)
+    .slice(0, 3);
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <Link href="/services" className="text-sm text-mars hover:underline">
+        ← Tous les services
+      </Link>
+
+      <header className="mt-6 flex items-start gap-4">
+        <span className="text-4xl" aria-hidden>
+          {service.icon ?? "🏛️"}
+        </span>
+        <div>
+          {service.category ? (
+            <p className="font-mono text-xs uppercase tracking-wide text-slate-500">
+              {service.category}
+            </p>
+          ) : null}
+          <h1 className="mt-1 font-mono text-3xl text-slate-50">{service.name}</h1>
+        </div>
+      </header>
+
+      <p className="mt-6 whitespace-pre-line text-slate-300">{service.description}</p>
+
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link href="/demandes/nouvelle" className={buttonClasses("primary")}>
+          Créer une demande liée
+        </Link>
+        <Link href="/contact" className={buttonClasses("secondary")}>
+          Poser une question
+        </Link>
+      </div>
+
+      {otherServices.length > 0 ? (
+        <section className="mt-12">
+          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-mars">
+            Autres services
+          </h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {otherServices.map((item) => (
+              <Link key={item.id} href={`/services/${item.slug}`}>
+                <Card className="h-full transition hover:border-mars/50">
+                  <h3 className="font-mono text-sm text-slate-100">{item.name}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-slate-400">{item.description}</p>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}

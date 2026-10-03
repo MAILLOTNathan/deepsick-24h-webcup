@@ -12,18 +12,54 @@ Next.js (App Router) + TypeScript · Tailwind CSS · Prisma · NextAuth.js · SQ
 
 ## Status
 
-🚧 Scaffolding — the repository currently contains the documentation and the needs-fetch tooling.
-Application code is added per competition need.
+✅ Base project implemented for the *Socle* needs — see the checklist below.
 
 ## Getting started
 
 ```bash
-cp .env.example .env   # then fill in the values
+cp .env.example .env          # then fill in the values
 npm install
-npx prisma migrate dev
-npx prisma db seed
-npm run dev
+npx prisma migrate dev        # creates prisma/dev.db (SQLite) and runs the seed
+npm run dev                   # http://localhost:3000
 ```
+
+> The default `.env` targets SQLite for local dev. Prisma enums are not supported by
+> SQLite, so enum-like fields are stored as strings and validated through `lib/roles.ts`.
+
+### Demo accounts (password: `password123`)
+
+| Account | Role | Landing page |
+| --- | --- | --- |
+| `citoyen@novaterra.fr` | `CITIZEN` | `/espace` |
+| `agent@novaterra.fr` | `AGENT` | `/agents` |
+| `admin@novaterra.fr` | `ADMIN` | `/admin` |
+
+## Implemented needs
+
+| Need | Feature | Status |
+| --- | --- | --- |
+| `D01` | Sign-up / account creation | ✅ |
+| `D03` | Login + personal space | ✅ |
+| `D04` | Contact the administration + acknowledgement | ✅ |
+| `D05` | Municipal services directory | ✅ |
+| `D06` | Municipal announcements | ✅ |
+| `D07` | Hierarchical home page | ✅ |
+| `D08` | Roles: citizen / agent / admin | ✅ |
+| `D09` | Differentiated permissions | ✅ |
+| `D19` | Agent workspace (Nova Terra API data) | ✅ |
+| `F22` | Citizen requests view with statuses | ✅ |
+
+### Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` / `npm run start` | Production build / start |
+| `npm run db:migrate` | Create/apply Prisma migrations |
+| `npm run db:seed` | Seed demo data |
+| `npm run db:reset` | Reset the database and re-seed |
+| `npm run db:studio` | Open Prisma Studio |
+
 
 ## Competition needs
 
