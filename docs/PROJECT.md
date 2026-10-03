@@ -165,6 +165,32 @@ instead of `foreground` / `muted-foreground`, which turn near-black on the light
 `--scene-*` values are declared once in `:root` and never overridden by a theme class; pass
 `<Logo tone="scene" />` for the mark.
 
+### Motion
+
+Animations use **anime.js v4** (imported as `animate`, `stagger`, `createDrawable`, `utils`).
+
+| Piece | File |
+| --- | --- |
+| Primitives (`reveal`, `revealSelf`, `revealChildren`, `countUp`, `drawIn`) | `lib/motion.ts` |
+| Declarative wrapper for server-rendered blocks (`<Reveal>` / `<Reveal self>`) | `components/motion/Reveal.tsx` |
+| Colony scene (star twinkle, dome drift, pointer parallax) | `components/colony/ColonyScene.tsx` |
+| Radar (graticule draw-in, rotating sweep, breathing blips) | `components/colony/RadarCard.tsx` |
+| Metric tiles (entrance stagger + count-up) | `components/colony/StatTile.tsx` |
+| Feed rows, page headers | `components/colony/FeedRow.tsx`, `components/ui/PageHeader.tsx` |
+| Landing hero, auth panels, theme gallery | `app/(public)/page.tsx`, `app/(auth)/layout.tsx`, `components/theme/ThemeGallery.tsx` |
+
+- **Entrance pattern:** `useMotionLayoutEffect` writes the hidden state and starts the animation
+  *before paint*, so nothing flashes and nothing can stay invisible.
+- **Stagger from context:** `revealSelf` derives its delay from the element's index among its
+  siblings — lists and grids stagger without threading index props through every page.
+- **Count-up** applies to plain integers only; strings such as `99.2%` or `3/12` are left alone.
+- **Polling-safe:** the 5 s `router.refresh()` on the consoles re-renders without remounting, so
+  animations do not replay and counters do not reset.
+- **Reduced motion:** every helper returns early when `prefers-reduced-motion: reduce` matches, so
+  the hidden start state is never applied; content is always readable.
+- **Durations/easings** come from `DUR` and the `EASE*` constants in `lib/motion.ts` — extend those
+  rather than hard-coding new values.
+
 ### Internationalization
 
 Three locales: **fr** (default), **en**, **es**.

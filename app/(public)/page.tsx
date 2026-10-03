@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { ColonyScene } from "@/components/colony/ColonyScene";
 import { SectionHeader } from "@/components/colony/FeedRow";
+import { Reveal } from "@/components/motion/Reveal";
 import { Card } from "@/components/ui/Card";
 import { buttonClasses } from "@/components/ui/Button";
 import { ReportStatusBadge } from "@/components/ui/StatusBadge";
@@ -41,12 +42,12 @@ export default async function LandingPage() {
       <section className="relative border-b border-border">
         <ColonyScene className="absolute inset-0" />
         <div className="relative mx-auto flex min-h-[560px] max-w-6xl flex-col justify-between px-4 py-6">
-          <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.3em]">
+          <Reveal self className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.3em]">
             <span className="text-scene-foreground">{t.common.appName}</span>
             <span className="text-scene-muted">{t.landing.os}</span>
-          </div>
+          </Reveal>
 
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl" stagger={120} y={16}>
             <span className="inline-flex items-center gap-2 rounded-full border border-[var(--scene-info)]/40 bg-[var(--scene-info)]/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--scene-info)]">
               {COLONY_ARC}
             </span>
@@ -64,22 +65,26 @@ export default async function LandingPage() {
                 {t.landing.ctaServices}
               </Link>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-scene-muted">
+          <Reveal
+            self
+            delay={220}
+            className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-scene-muted"
+          >
             <span>{colonyClock()}</span>
             <span className="flex items-center gap-1.5">
               <span className="inline-block size-1.5 rounded-full bg-[var(--scene-primary)]" />
               {t.common.colonyNominal}
             </span>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Quick actions */}
       <section className="mx-auto max-w-6xl px-4 py-10">
         <SectionHeader title={t.landing.whatNext} />
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal stagger={70} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action) => (
             <Link key={action.href} href={action.href}>
               <Card size="sm" className="h-full gap-2 p-4 transition hover:border-primary/50">
@@ -91,7 +96,7 @@ export default async function LandingPage() {
               </Card>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* Services */}
@@ -104,7 +109,7 @@ export default async function LandingPage() {
             </Link>
           }
         />
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal stagger={70} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {featuredServices.map((service) => (
             <Link key={service.id} href={`/services/${service.slug}`}>
               <Card size="sm" className="h-full gap-2 p-4 transition hover:border-primary/50">
@@ -116,7 +121,7 @@ export default async function LandingPage() {
               </Card>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* Announcements */}
@@ -129,7 +134,7 @@ export default async function LandingPage() {
             </Link>
           }
         />
-        <div className="grid gap-3 md:grid-cols-2">
+        <Reveal stagger={90} className="grid gap-3 md:grid-cols-2">
           {latestAnnouncements.map((announcement) => (
             <Link key={announcement.id} href={`/announcements/${announcement.slug}`}>
               <Card size="sm" className="h-full gap-2 p-4 transition hover:border-primary/50">
@@ -143,7 +148,7 @@ export default async function LandingPage() {
               </Card>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* Signalement lifecycle */}

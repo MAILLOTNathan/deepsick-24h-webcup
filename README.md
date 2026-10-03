@@ -117,6 +117,21 @@ The UI ships in **French (default), English and Spanish**.
 **Adding a language:** add its code and label in [`lib/i18n/config.ts`](lib/i18n/config.ts), copy
 `fr.ts`, translate it, and register the dictionary in [`lib/i18n/server.ts`](lib/i18n/server.ts).
 
+## Animations
+
+Motion is built on [**anime.js v4**](https://animejs.com) — no CSS-animation litter.
+
+- **Primitives:** [`lib/motion.ts`](lib/motion.ts) (`reveal`, `revealSelf`, `revealChildren`,
+  `countUp`, `drawIn`, shared easings/durations) + the
+  [`<Reveal>`](components/motion/Reveal.tsx) client wrapper for server-rendered blocks.
+- **What moves:** the landing hero (staggered reveal), the colony scene (twinkling stars, drifting
+  domes, pointer parallax), page headers, metric tiles (fade in + count-up), every feed row
+  (staggered), the radar (graticule draw-in, rotating sweep, breathing blips) and the theme gallery.
+- **Reduced motion is respected:** when `prefers-reduced-motion: reduce` is set, every helper bails
+  out *before* hiding anything, so content is always visible — it just appears instantly.
+- **Rules:** import these helpers from client components only; never animate `foreground`-based
+  copy over the dark scene (see the `scene-*` tokens above); keep durations from `DUR`.
+
 ## Scripts
 
 | Command | Purpose |
