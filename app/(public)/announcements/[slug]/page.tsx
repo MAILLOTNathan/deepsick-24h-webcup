@@ -1,26 +1,29 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getAnnouncementBySlug } from "@/lib/data";
 import { formatDate } from "@/lib/format";
+import { getDictionary } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
 type Params = { params: { slug: string } };
 
-export async function generateMetadata({ params }: Params) {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const announcement = await getAnnouncementBySlug(params.slug);
-  return { title: announcement?.title ?? "Annonce municipale" };
+  return { title: announcement?.title ?? getDictionary().publicPages.announcements.title };
 }
 
 export default async function AnnouncementDetailPage({ params }: Params) {
+  const t = getDictionary();
   const announcement = await getAnnouncementBySlug(params.slug);
   if (!announcement || !announcement.published) notFound();
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10">
       <Link href="/announcements" className="text-sm text-primary hover:underline">
-        ← Toutes les annonces
+        {t.publicPages.announcements.backAll}
       </Link>
 
       <header className="mt-6">

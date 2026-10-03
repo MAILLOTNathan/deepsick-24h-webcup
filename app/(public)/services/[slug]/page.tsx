@@ -1,20 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { buttonClasses } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getPublishedServices, getServiceBySlug } from "@/lib/data";
+import { getDictionary } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
 type Params = { params: { slug: string } };
 
-export async function generateMetadata({ params }: Params) {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const service = await getServiceBySlug(params.slug);
-  return { title: service?.name ?? "Service municipal" };
+  return { title: service?.name ?? getDictionary().publicPages.services.title };
 }
 
 export default async function ServiceDetailPage({ params }: Params) {
+  const t = getDictionary();
   const service = await getServiceBySlug(params.slug);
   if (!service || !service.published) notFound();
 
@@ -25,7 +28,7 @@ export default async function ServiceDetailPage({ params }: Params) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <Link href="/services" className="text-sm text-primary hover:underline">
-        ← Tous les services
+        {t.publicPages.services.backAll}
       </Link>
 
       <header className="mt-6 flex items-start gap-4">
@@ -45,18 +48,18 @@ export default async function ServiceDetailPage({ params }: Params) {
       <p className="mt-6 whitespace-pre-line text-muted-foreground">{service.description}</p>
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/demandes/nouvelle" className={buttonClasses("primary")}>
-          Créer une demande liée
+        <Link href="/citizen/report" className={buttonClasses("primary")}>
+          {t.publicPages.services.createRequest}
         </Link>
         <Link href="/contact" className={buttonClasses("secondary")}>
-          Poser une question
+          {t.publicPages.services.askQuestion}
         </Link>
       </div>
 
       {otherServices.length > 0 ? (
         <section className="mt-12">
           <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-primary">
-            Autres services
+            {t.publicPages.services.other}
           </h2>
           <div className="grid gap-4 md:grid-cols-3">
             {otherServices.map((item) => (

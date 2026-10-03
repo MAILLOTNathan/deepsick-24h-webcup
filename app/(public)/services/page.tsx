@@ -1,20 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/Alert";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getPublishedServices } from "@/lib/data";
+import { getDictionary } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Services municipaux" };
+export function generateMetadata(): Metadata {
+  return { title: getDictionary().publicPages.services.title };
+}
 
 export default async function ServicesPage() {
+  const t = getDictionary();
   const services = await getPublishedServices();
 
   const categories = Array.from(
     services.reduce((map, service) => {
-      const key = service.category ?? "Autres services";
+      const key = service.category ?? t.publicPages.services.other;
       map.set(key, [...(map.get(key) ?? []), service]);
       return map;
     }, new Map<string, typeof services>()),
@@ -23,14 +28,14 @@ export default async function ServicesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <PageHeader
-        title="Services municipaux"
-        description="Retrouvez l'ensemble des services proposés par la ville de Nova Terra et accédez directement aux informations utiles."
+        title={t.publicPages.services.title}
+        description={t.publicPages.services.subtitle}
       />
 
       {services.length === 0 ? (
         <EmptyState
-          title="Aucun service publié pour le moment"
-          description="Les services municipaux seront publiés prochainement."
+          title={t.publicPages.services.empty}
+          description={t.publicPages.services.emptyHint}
         />
       ) : (
         <div className="space-y-10">
@@ -51,7 +56,7 @@ export default async function ServicesPage() {
                         {service.description}
                       </p>
                       <p className="mt-4 font-mono text-xs uppercase tracking-wide text-primary opacity-0 transition group-hover:opacity-100">
-                        Consulter →
+                        {t.publicPages.services.consult}
                       </p>
                     </Card>
                   </Link>
@@ -64,4 +69,3 @@ export default async function ServicesPage() {
     </div>
   );
 }
-

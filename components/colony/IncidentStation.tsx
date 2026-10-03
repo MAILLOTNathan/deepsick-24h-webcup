@@ -1,40 +1,29 @@
 import { IncidentConsole } from "@/components/colony/IncidentConsole";
 import { getReports } from "@/lib/data";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 import { toReportRow } from "@/lib/serialize";
 import type { ReportType } from "@/lib/roles";
 
-const COPY: Record<ReportType, { station: string; title: string; subtitle: string; role: string }> = {
-  SECURITY: {
-    station: "ARES SECURITY COMMAND",
-    title: "Opérations de sécurité",
-    subtitle: "Contrôle des secteurs, interventions et sûreté civique.",
-    role: "SECURITY",
-  },
-  MEDICAL: {
-    station: "ASCLEPIUS MEDICAL NET",
-    title: "Urgences et soins",
-    subtitle: "Triage des urgences, équipes et capacité médicale.",
-    role: "MEDIC",
-  },
-  MAINTENANCE: {
-    station: "HEPHAESTUS INFRASTRUCTURE",
-    title: "Maintenance vitale",
-    subtitle: "Air, énergie, eau et propreté des modules.",
-    role: "MAINTENANCE",
-  },
-  CLEANLINESS: {
-    station: "HEPHAESTUS INFRASTRUCTURE",
-    title: "Propreté des modules",
-    subtitle: "Collecte et salubrité des espaces communs.",
-    role: "MAINTENANCE",
-  },
+/** In-world station names stay untranslated. */
+const STATIONS: Record<ReportType, string> = {
+  SECURITY: "ARES SECURITY COMMAND",
+  MEDICAL: "ASCLEPIUS MEDICAL NET",
+  MAINTENANCE: "HEPHAESTUS INFRASTRUCTURE",
+  CLEANLINESS: "HEPHAESTUS INFRASTRUCTURE",
+};
+
+const ROLES: Record<ReportType, string> = {
+  SECURITY: "SECURITY",
+  MEDICAL: "MEDIC",
+  MAINTENANCE: "MAINTENANCE",
+  CLEANLINESS: "MAINTENANCE",
 };
 
 /** Server wrapper shared by the security / medical / maintenance consoles. */
 export async function IncidentStation({ type }: { type: ReportType }) {
-  const copy = COPY[type];
-  await requirePageRole([copy.role, "COUNCIL"]);
+  const t = getDictionary();
+  await requirePageRole([ROLES[type], "COUNCIL"]);
 
   const all = await getReports();
   const reports = all.filter((report) =>
@@ -43,9 +32,18 @@ export async function IncidentStation({ type }: { type: ReportType }) {
       : report.type === type,
   );
 
+  const copy =
+    type === "SECURITY"
+      ? t.ops.security
+      : type === "MEDICAL"
+        ? t.ops.medical
+        : type === "CLEANLINESS"
+          ? t.ops.cleanliness
+          : t.ops.maintenance;
+
   return (
     <IncidentConsole
-      station={copy.station}
+      station={STATIONS[type]}
       title={copy.title}
       subtitle={copy.subtitle}
       reports={reports.map(toReportRow)}

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { FeedRow, SectionHeader } from "@/components/colony/FeedRow";
@@ -5,12 +6,17 @@ import { Button } from "@/components/ui/Button";
 import { markNotificationsReadAction } from "@/lib/actions/notifications";
 import { getNotifications } from "@/lib/data";
 import { formatDateTime } from "@/lib/format";
+import { format, getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Notifications" };
+
+export function generateMetadata(): Metadata {
+  return { title: getDictionary().citizen.notifications.title };
+}
 
 export default async function CitizenNotificationsPage() {
+  const t = getDictionary();
   const session = await requirePageRole(["CITIZEN"]);
   const notifications = await getNotifications(session.user.id);
   const unread = notifications.filter((notification) => !notification.read).length;
@@ -19,22 +25,24 @@ export default async function CitizenNotificationsPage() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-mono text-xl text-foreground">Centre de notifications</h1>
-          <p className="text-sm text-muted-foreground">{unread} non lue(s)</p>
+          <h1 className="font-mono text-xl text-foreground">{t.citizen.notifications.title}</h1>
+          <p className="text-sm text-muted-foreground">
+            {format(t.citizen.notifications.unread, { count: unread })}
+          </p>
         </div>
         {unread > 0 ? (
           <form action={markNotificationsReadAction}>
             <Button type="submit" variant="secondary" size="sm">
-              Tout marquer comme lu
+              {t.citizen.notifications.markAll}
             </Button>
           </form>
         ) : null}
       </div>
 
-      <SectionHeader title="Fil d'activité" />
+      <SectionHeader title={t.citizen.notifications.feed} />
       {notifications.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Aucune notification.
+          {t.citizen.notifications.empty}
         </p>
       ) : (
         <div className="space-y-2">

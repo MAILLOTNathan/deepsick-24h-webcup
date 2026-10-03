@@ -1,6 +1,7 @@
 "use server";
 
 import type { ActionState } from "@/lib/action-state";
+import { getDictionary } from "@/lib/i18n/server";
 import { getAuthSession } from "@/lib/permissions";
 import { createContactMessage } from "@/lib/services";
 import { contactSchema, firstError } from "@/lib/validation";
@@ -28,10 +29,10 @@ export async function contactAction(
     });
     return {
       ok: true,
-      message: "Votre message a bien été transmis à l'administration.",
+      message: getDictionary().publicPages.contact.sent,
       reference: message.reference,
     };
   } catch {
-    return { ok: false, message: "L'envoi a échoué. Réessayez dans un instant." };
+    return { ok: false, message: getDictionary().publicPages.contact.failed };
   }
 }

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import type { ActionState } from "@/lib/action-state";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 import { createOrder, updateOrderStatus } from "@/lib/services";
 import { ORDER_TYPES, STAFF_ROLES, isOrderStatus } from "@/lib/roles";
@@ -46,7 +47,7 @@ export async function createOrderAction(
       etaMinutes: parsed.data.type === "TAXI" ? 8 : 24,
     });
   } catch {
-    return { ok: false, message: "La commande n'a pas pu être créée." };
+    return { ok: false, message: getDictionary().errors.orderFailed };
   }
 
   revalidateOrders();

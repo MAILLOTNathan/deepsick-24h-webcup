@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { devActor, requireDevPanel } from "@/lib/dev-access";
+import { format, getDictionary } from "@/lib/i18n/server";
 import { addTicketComment, syncTickets, updateTicket } from "@/lib/tickets";
 
 export type TicketActionState = { ok: boolean; message: string };
@@ -11,6 +12,7 @@ export async function syncTicketsAction(
   _previous: TicketActionState,
   _formData: FormData,
 ): Promise<TicketActionState> {
+  const t = getDictionary();
   await requireDevPanel();
 
   try {
@@ -19,17 +21,31 @@ export async function syncTicketsAction(
 
     const wave =
       result.session?.next_wave_number !== undefined
-        ? ` Prochaine vague dans ${result.session.minutes_until_next_wave ?? "?"} min.`
+        ? format(t.dev.sync.nextWave, {
+            minutes: result.session.minutes_until_next_wave ?? "?",
+          })
         : "";
 
     return {
       ok: true,
-      message: `${result.fetched} besoin(s) reçu(s) — ${result.created} créé(s), ${result.updated} mis à jour.${wave}`,
+      message: format(t.dev.sync.ok, {
+        fetched: result.fetched,
+        created: result.created,
+        updated: result.updated,
+        wave,
+      }),
     };
   } catch (error) {
+    const raw = error instanceof Error ? error.message : "";
+    const api = raw.match(/répondu (\d+)\s*(.*)\.$/);
+
     return {
       ok: false,
-      message: error instanceof Error ? error.message : "Synchronisation impossible.",
+      message: raw.includes("WEBCUP_API_KEY")
+        ? t.dev.sync.missingKey
+        : api
+          ? format(t.dev.sync.apiError, { status: api[1], statusText: api[2] })
+          : t.dev.sync.failed,
     };
   }
 }

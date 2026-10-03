@@ -5,24 +5,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
+import { LocaleSwitcher } from "@/components/i18n/LocaleSwitcher";
 import { Logo } from "@/components/layout/Logo";
 import { ThemePicker } from "@/components/layout/ThemePicker";
 import { buttonClasses } from "@/components/ui/Button";
+import { useT } from "@/lib/i18n/client";
 import { homeForRole } from "@/lib/roles";
 import { cn } from "@/lib/ui";
 
 const LINKS = [
-  { href: "/", label: "Accueil" },
-  { href: "/services", label: "Services" },
-  { href: "/announcements", label: "Annonces" },
-  { href: "/contact", label: "Contact" },
-];
+  { href: "/", label: "home" },
+  { href: "/services", label: "services" },
+  { href: "/announcements", label: "announcements" },
+  { href: "/contact", label: "contact" },
+] as const;
 
 export function PublicHeader({
   user,
 }: {
   user: { name?: string | null; role: string } | null;
 }) {
+  const t = useT();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -49,33 +52,34 @@ export function PublicHeader({
               <span aria-hidden className="mr-1 text-primary/70">
                 {isActive(link.href) ? ">" : "/"}
               </span>
-              {link.label}
+              {t.nav[link.label]}
             </Link>
           ))}
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <LocaleSwitcher />
           <ThemePicker />
           {user ? (
             <>
               <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>
-                Mon espace
+                {t.nav.mySpace}
               </Link>
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className={buttonClasses("ghost", "sm")}
               >
-                Déconnexion
+                {t.nav.signOut}
               </button>
             </>
           ) : (
             <>
               <Link href="/login" className={buttonClasses("ghost", "sm")}>
-                Connexion
+                {t.nav.login}
               </Link>
               <Link href="/register" className={buttonClasses("primary", "sm")}>
-                Créer un compte
+                {t.nav.register}
               </Link>
             </>
           )}
@@ -83,11 +87,11 @@ export function PublicHeader({
 
         <button
           type="button"
-          aria-label="Ouvrir le menu"
+          aria-label={t.nav.openMenu}
           onClick={() => setOpen((value) => !value)}
           className={buttonClasses("secondary", "sm", "md:hidden")}
         >
-          Menu
+          {t.nav.menu}
         </button>
       </div>
 
@@ -101,32 +105,33 @@ export function PublicHeader({
                 onClick={() => setOpen(false)}
                 className="rounded-md px-3 py-2 font-mono text-xs uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground"
               >
-                {link.label}
+                {t.nav[link.label]}
               </Link>
             ))}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2">
+            <LocaleSwitcher />
             <ThemePicker />
             {user ? (
               <>
                 <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>
-                  Mon espace
+                  {t.nav.mySpace}
                 </Link>
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className={buttonClasses("ghost", "sm")}
                 >
-                  Déconnexion
+                  {t.nav.signOut}
                 </button>
               </>
             ) : (
               <>
                 <Link href="/login" className={buttonClasses("ghost", "sm")}>
-                  Connexion
+                  {t.nav.login}
                 </Link>
                 <Link href="/register" className={buttonClasses("primary", "sm")}>
-                  Créer un compte
+                  {t.nav.register}
                 </Link>
               </>
             )}

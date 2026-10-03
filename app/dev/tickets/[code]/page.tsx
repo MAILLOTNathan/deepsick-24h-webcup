@@ -7,23 +7,29 @@ import { TicketCommentForm, TicketUpdateForm } from "@/components/dev/TicketForm
 import { Card } from "@/components/ui/Card";
 import { requireDevPanel } from "@/lib/dev-access";
 import { formatDateTime } from "@/lib/format";
+import { format, getDictionary } from "@/lib/i18n/server";
 import { getTicketByCode } from "@/lib/tickets";
 
 export const dynamic = "force-dynamic";
 
 export default async function DevTicketPage({ params }: { params: { code: string } }) {
+  const t = getDictionary();
   await requireDevPanel();
 
   const ticket = await getTicketByCode(params.code);
   if (!ticket) notFound();
 
   const metadata: Array<[string, string, string?]> = [
-    ["Difficulté", ticket.difficulty, `niveau ${ticket.level}`],
-    ["XP", `${ticket.xp}`, "récompense"],
-    ["Groupe", ticket.group ?? "—", "vague d'origine"],
-    ["Vague", ticket.wave === null ? "—" : `#${ticket.wave}`],
-    ["Demandeur", ticket.requester ?? "—", ticket.requesterType ?? undefined],
-    ["Synchronisé", formatDateTime(ticket.syncedAt)],
+    [
+      t.dev.board.difficulty,
+      (t.difficulty as Record<string, string>)[ticket.difficulty] ?? ticket.difficulty,
+      format(t.dev.detail.level, { level: ticket.level }),
+    ],
+    [t.dev.board.xp, `${ticket.xp}`, t.dev.detail.reward],
+    [t.dev.detail.group, ticket.group ?? t.common.none, t.dev.detail.waveOrigin],
+    [t.dev.detail.wave, ticket.wave === null ? t.common.none : `#${ticket.wave}`],
+    [t.dev.detail.requester, ticket.requester ?? t.common.none, ticket.requesterType ?? undefined],
+    [t.dev.detail.synced, formatDateTime(ticket.syncedAt)],
   ];
 
   return (
@@ -32,12 +38,12 @@ export default async function DevTicketPage({ params }: { params: { code: string
         href="/dev/tickets"
         className="font-mono text-[11px] uppercase tracking-wide text-primary hover:underline"
       >
-        ← Tous les tickets
+        {t.dev.detail.back}
       </Link>
 
       <header>
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-          {ticket.code} · {ticket.group ?? "Besoins"}
+          {ticket.code} · {ticket.group ?? t.dev.nav.tickets}
         </p>
         <h1 className="mt-1 font-mono text-xl text-foreground">{ticket.title}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -45,7 +51,9 @@ export default async function DevTicketPage({ params }: { params: { code: string
           <DifficultyBadge difficulty={ticket.difficulty} />
           {ticket.isAi ? <AiBadge /> : null}
           <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-            {ticket.assignee ? `Assigné à ${ticket.assignee}` : "Non assigné"}
+            {ticket.assignee
+              ? format(t.dev.detail.assignedTo, { name: ticket.assignee })
+              : t.dev.detail.unassigned}
           </span>
         </div>
       </header>
@@ -53,13 +61,13 @@ export default async function DevTicketPage({ params }: { params: { code: string
       <div className="grid gap-4 lg:grid-cols-[1.4fr,1fr]">
         <div className="space-y-4">
           <Card className="p-4">
-            <SectionHeader title="Description officielle (API Webcup)" />
+            <SectionHeader title={t.dev.detail.description} />
             <p className="whitespace-pre-line text-sm text-foreground">{ticket.description}</p>
           </Card>
 
           <Card className="p-4">
             <SectionHeader
-              title="Activité"
+              title={t.dev.detail.activity}
               badge={
                 <span className="font-mono text-[11px] text-muted-foreground">
                   {ticket.comments.length}
@@ -67,7 +75,7 @@ export default async function DevTicketPage({ params }: { params: { code: string
               }
             />
             {ticket.comments.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aucune activité pour l'instant.</p>
+              <p className="text-sm text-muted-foreground">{t.dev.detail.noActivity}</p>
             ) : (
               <ol className="space-y-3">
                 {ticket.comments.map((comment) => (
@@ -78,7 +86,7 @@ export default async function DevTicketPage({ params }: { params: { code: string
                       </span>
                       {comment.kind === "EVENT" ? (
                         <span className="font-mono text-[10px] uppercase tracking-wide text-primary">
-                          événement
+                          {t.dev.detail.event}
                         </span>
                       ) : null}
                       <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -95,7 +103,7 @@ export default async function DevTicketPage({ params }: { params: { code: string
 
         <div className="space-y-4">
           <Card className="p-4">
-            <SectionHeader title="Traitement" />
+            <SectionHeader title={t.dev.detail.processing} />
             <TicketUpdateForm
               code={ticket.code}
               status={ticket.status}
@@ -104,12 +112,12 @@ export default async function DevTicketPage({ params }: { params: { code: string
           </Card>
 
           <Card className="p-4">
-            <SectionHeader title="Ajouter une note" />
+            <SectionHeader title={t.dev.detail.addNote} />
             <TicketCommentForm code={ticket.code} />
           </Card>
 
           <Card className="p-4">
-            <SectionHeader title="Métadonnées" />
+            <SectionHeader title={t.dev.detail.metadata} />
             <dl className="space-y-2">
               {metadata.map(([label, value, hint]) => (
                 <div key={label} className="flex items-baseline justify-between gap-3">

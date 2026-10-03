@@ -1,11 +1,8 @@
+"use client";
+
 import { Badge } from "@/components/ui/Badge";
+import { useT } from "@/lib/i18n/client";
 import {
-  ORDER_STATUS_LABELS,
-  REPORT_PRIORITY_LABELS,
-  REPORT_STATUS_LABELS,
-  REQUEST_PRIORITY_LABELS,
-  REQUEST_STATUS_LABELS,
-  ROLE_LABELS,
   isOrderStatus,
   isReportPriority,
   isReportStatus,
@@ -74,7 +71,8 @@ const ROLE_TONES: Record<Role, Tone> = {
 
 /** Report / incident status (OPEN → CLOSED). */
 export function ReportStatusBadge({ status }: { status: string }) {
-  const label = isReportStatus(status) ? REPORT_STATUS_LABELS[status] : status;
+  const t = useT();
+  const label = isReportStatus(status) ? t.reportStatus[status] : status;
   return (
     <Badge tone={isReportStatus(status) ? REPORT_STATUS_TONES[status] : "neutral"}>{label}</Badge>
   );
@@ -82,7 +80,8 @@ export function ReportStatusBadge({ status }: { status: string }) {
 
 /** Report priority (LOW → CRITICAL). */
 export function ReportPriorityBadge({ priority }: { priority: string }) {
-  const label = isReportPriority(priority) ? REPORT_PRIORITY_LABELS[priority] : priority;
+  const t = useT();
+  const label = isReportPriority(priority) ? t.reportPriority[priority] : priority;
   return (
     <Badge tone={isReportPriority(priority) ? REPORT_PRIORITY_TONES[priority] : "neutral"}>
       {label}
@@ -92,25 +91,33 @@ export function ReportPriorityBadge({ priority }: { priority: string }) {
 
 /** Order status (taxi / restauration). */
 export function OrderStatusBadge({ status }: { status: string }) {
-  const label = isOrderStatus(status) ? ORDER_STATUS_LABELS[status] : status;
-  return <Badge tone={isOrderStatus(status) ? ORDER_STATUS_TONES[status] : "neutral"}>{label}</Badge>;
+  const t = useT();
+  const label = isOrderStatus(status) ? t.orderStatus[status] : status;
+  return (
+    <Badge tone={isOrderStatus(status) ? ORDER_STATUS_TONES[status] : "neutral"}>{label}</Badge>
+  );
 }
 
 /** Démarche administrative status (kept for the documented municipal needs). */
 export function StatusBadge({ status }: { status: string }) {
-  const label = isRequestStatus(status) ? REQUEST_STATUS_LABELS[status] : status;
+  const t = useT();
+  const label = isRequestStatus(status) ? t.requestStatus[status] : status;
   return <Badge tone={REQUEST_STATUS_TONES[status] ?? "neutral"}>{label}</Badge>;
 }
 
 export function PriorityBadge({ priority }: { priority: string }) {
+  const t = useT();
   const label =
-    priority in REQUEST_PRIORITY_LABELS
-      ? REQUEST_PRIORITY_LABELS[priority as RequestPriority]
+    priority in t.requestPriority
+      ? t.requestPriority[priority as RequestPriority]
       : priority;
-  return <Badge tone={REQUEST_PRIORITY_TONES[priority as RequestPriority] ?? "neutral"}>{label}</Badge>;
+  return (
+    <Badge tone={REQUEST_PRIORITY_TONES[priority as RequestPriority] ?? "neutral"}>{label}</Badge>
+  );
 }
 
 export function RoleBadge({ role }: { role: string }) {
-  const label = isRole(role) ? ROLE_LABELS[role] : role;
+  const t = useT();
+  const label = isRole(role) ? t.roles[role] : role;
   return <Badge tone={isRole(role) ? ROLE_TONES[role] : "neutral"}>{label}</Badge>;
 }

@@ -7,21 +7,28 @@ import { Check } from "lucide-react";
 import { ThemeSwatch } from "@/components/layout/ThemePicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useT } from "@/lib/i18n/client";
 import { THEMES } from "@/lib/themes";
 import { cn } from "@/lib/ui";
 
 /** Full theme gallery — each card applies the theme on click. */
 export function ThemeGallery() {
+  const t = useT();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
   const active = mounted ? theme : undefined;
+  const copy = t.themes as Record<string, { label: string; description: string }>;
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {THEMES.map((candidate) => {
         const isActive = active === candidate.id;
+        const item = copy[candidate.id] ?? {
+          label: candidate.label,
+          description: candidate.description,
+        };
         return (
           <Card
             key={candidate.id}
@@ -31,12 +38,12 @@ export function ThemeGallery() {
 
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h2 className="font-mono text-sm text-foreground">{candidate.label}</h2>
+                <h2 className="font-mono text-sm text-foreground">{item.label}</h2>
                 <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {candidate.scheme === "dark" ? "sombre" : "clair"}
+                  {candidate.scheme === "dark" ? t.common.dark : t.common.light}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">{candidate.description}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
             </div>
 
             <Button
@@ -49,10 +56,10 @@ export function ThemeGallery() {
               {isActive ? (
                 <>
                   <Check data-icon="inline-start" />
-                  Thème actif
+                  {t.common.activeTheme}
                 </>
               ) : (
-                "Appliquer"
+                t.common.apply
               )}
             </Button>
           </Card>

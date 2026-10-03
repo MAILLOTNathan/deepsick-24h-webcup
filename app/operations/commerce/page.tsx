@@ -1,15 +1,22 @@
+import type { Metadata } from "next";
+
 import { FeedRow, LiveBadge, SectionHeader } from "@/components/colony/FeedRow";
 import { OrderStatusForm } from "@/components/colony/OrderStatusForm";
 import { RadarCard } from "@/components/colony/RadarCard";
 import { StatTile } from "@/components/colony/StatTile";
 import { Card } from "@/components/ui/Card";
 import { getOrders } from "@/lib/data";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Commerce & restauration" };
+
+export function generateMetadata(): Metadata {
+  return { title: getDictionary().ops.commerce.title };
+}
 
 export default async function CommerceConsolePage() {
+  const t = getDictionary();
   await requirePageRole(["MERCHANT", "COUNCIL"]);
   const orders = await getOrders({ type: "FOOD" });
 
@@ -28,19 +35,34 @@ export default async function CommerceConsolePage() {
           </p>
           <LiveBadge />
         </div>
-        <h1 className="mt-1 font-mono text-xl text-foreground">Commandes & cantines</h1>
-        <p className="text-sm text-muted-foreground">Préparation, prêt et retrait des repas de la colonie.</p>
+        <h1 className="mt-1 font-mono text-xl text-foreground">{t.ops.commerce.title}</h1>
+        <p className="text-sm text-muted-foreground">{t.ops.commerce.subtitle}</p>
       </header>
 
       <div className="grid grid-cols-3 gap-3">
-        <StatTile label="En préparation" value={preparing.length} hint="cuisine" tone="warning" />
-        <StatTile label="Prêtes" value={ready.length} hint="au comptoir" tone="info" />
-        <StatTile label="Recette" value={`${revenue}`} hint="crédits simulés" tone="success" />
+        <StatTile
+          label={t.ops.commerce.preparing}
+          value={preparing.length}
+          hint={t.ops.commerce.preparingHint}
+          tone="warning"
+        />
+        <StatTile
+          label={t.ops.commerce.ready}
+          value={ready.length}
+          hint={t.ops.commerce.readyHint}
+          tone="info"
+        />
+        <StatTile
+          label={t.ops.commerce.revenue}
+          value={`${revenue}`}
+          hint={t.ops.commerce.revenueHint}
+          tone="success"
+        />
       </div>
 
       <RadarCard
-        label="Commons Kitchen · BioDôme 02"
-        caption="Rayon de livraison actif"
+        label={t.ops.commerce.radarLabel}
+        caption={t.ops.commerce.radarCaption}
         blips={[
           { x: 0.44, y: 0.44, tone: "warning" },
           { x: 0.6, y: 0.56, tone: "success" },
@@ -48,10 +70,10 @@ export default async function CommerceConsolePage() {
       />
 
       <section>
-        <SectionHeader title="File des commandes" badge={<LiveBadge label={`${orders.length}`} />} />
+        <SectionHeader title={t.ops.commerce.queue} badge={<LiveBadge label={`${orders.length}`} />} />
         {orders.length === 0 ? (
           <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            Aucune commande.
+            {t.ops.commerce.empty}
           </p>
         ) : (
           <div className="space-y-2">
@@ -62,7 +84,9 @@ export default async function CommerceConsolePage() {
                     className="flex-1 border-0 bg-transparent p-0"
                     icon="🍜"
                     title={`${order.reference} · ${order.summary}`}
-                    meta={[order.customer?.name ?? null, `${order.total} crédits`].filter(Boolean).join(" · ")}
+                    meta={[order.customer?.name ?? null, `${order.total} ${t.citizen.wallet.credits}`]
+                      .filter(Boolean)
+                      .join(" · ")}
                   />
                   <OrderStatusForm orderId={order.id} status={order.status} />
                 </div>

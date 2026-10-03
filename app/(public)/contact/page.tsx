@@ -1,16 +1,20 @@
+import type { Metadata } from "next";
+
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ContactForm } from "@/components/forms/ContactForm";
+import { getDictionary } from "@/lib/i18n/server";
 
-export const metadata = { title: "Contacter l'administration" };
+export function generateMetadata(): Metadata {
+  return { title: getDictionary().publicPages.contact.title };
+}
 
 export default function ContactPage() {
+  const t = getDictionary();
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <PageHeader
-        title="Contacter l'administration"
-        description="Une question, une difficulté ? Transmettez un message aux services municipaux : une référence vous est attribuée pour suivre votre demande."
-      />
+      <PageHeader title={t.publicPages.contact.title} description={t.publicPages.contact.subtitle} />
 
       <div className="grid gap-6 md:grid-cols-[2fr,1fr]">
         <Card>
@@ -19,18 +23,11 @@ export default function ContactPage() {
 
         <Card className="space-y-3 text-sm text-muted-foreground">
           <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
-            Bon à savoir
+            {t.publicPages.contact.goodToKnow}
           </h2>
-          <p>
-            Votre message est enregistré et reçoit une référence unique affichée à l'envoi.
-          </p>
-          <p>
-            Les agents municipaux consultent les messages depuis leur espace de travail et y
-            répondent dans les meilleurs délais.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Urgence ? Contactez directement les services d'urgence de la colonie.
-          </p>
+          <p>{t.publicPages.contact.tip1}</p>
+          <p>{t.publicPages.contact.tip2}</p>
+          <p className="text-xs text-muted-foreground">{t.publicPages.contact.tip3}</p>
         </Card>
       </div>
     </div>

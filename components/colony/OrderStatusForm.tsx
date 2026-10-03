@@ -1,22 +1,25 @@
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Field";
 import { updateOrderStatusAction } from "@/lib/actions/orders";
-import { ORDER_STATUSES, ORDER_STATUS_LABELS } from "@/lib/roles";
+import { getDictionary } from "@/lib/i18n/server";
+import { ORDER_STATUSES } from "@/lib/roles";
 
 /** Inline status control for taxi / restauration orders. */
-export function OrderStatusForm({ orderId, status }: { orderId: string; status: string }) {
+export async function OrderStatusForm({ orderId, status }: { orderId: string; status: string }) {
+  const t = getDictionary();
+
   return (
     <form action={updateOrderStatusAction} className="flex items-center gap-2">
       <input type="hidden" name="orderId" value={orderId} />
       <Select name="status" defaultValue={status} className="h-8 w-auto text-xs">
         {ORDER_STATUSES.map((value) => (
           <option key={value} value={value}>
-            {ORDER_STATUS_LABELS[value]}
+            {t.orderStatus[value]}
           </option>
         ))}
       </Select>
       <Button type="submit" variant="secondary" size="sm">
-        Maj
+        {t.ops.administration.updateShort}
       </Button>
     </form>
   );

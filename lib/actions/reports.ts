@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import type { ActionState } from "@/lib/action-state";
+import { getDictionary } from "@/lib/i18n/server";
 import { requirePageRole } from "@/lib/permissions";
 import {
   assignReport,
@@ -62,7 +63,7 @@ export async function createReportAction(
   try {
     await createReport(session.user.id, parsed.data);
   } catch {
-    return { ok: false, message: "Le signalement n'a pas pu être transmis." };
+    return { ok: false, message: getDictionary().errors.reportFailed };
   }
 
   revalidateIncidents();

@@ -8,39 +8,40 @@ import { Button } from "@/components/ui/Button";
 import { Field, Input } from "@/components/ui/Field";
 import { initialActionState } from "@/lib/action-state";
 import { registerAction } from "@/lib/actions/auth";
-
-const TABS = [
-  { href: "/login", label: "Connexion", active: false },
-  { href: "/register", label: "Inscription", active: true },
-];
+import { useT } from "@/lib/i18n/client";
 
 function SubmitButton() {
+  const t = useT();
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? "Création…" : "→ Créer mon identité colon"}
+      {pending ? t.auth.register.submitting : t.auth.register.submit}
     </Button>
   );
 }
 
 export function RegisterForm() {
+  const t = useT();
   const [state, formAction] = useFormState(registerAction, initialActionState);
+
+  const tabs = [
+    { href: "/login", label: t.auth.loginTab, active: false },
+    { href: "/register", label: t.auth.registerTab, active: true },
+  ];
 
   return (
     <div className="space-y-5">
       <span className="inline-flex items-center gap-2 rounded-full border border-[var(--info)]/40 bg-[var(--info)]/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--info)]">
-        🛡️ Nouvelle identité · Tier I
+        {t.auth.newIdentity}
       </span>
 
       <header>
-        <h1 className="font-mono text-2xl leading-tight text-foreground">Rejoindre Terra Nova.</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Créez votre identité civique pour accéder aux services de la colonie.
-        </p>
+        <h1 className="font-mono text-2xl leading-tight text-foreground">{t.auth.register.title}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t.auth.register.subtitle}</p>
       </header>
 
       <div className="grid grid-cols-2 rounded-lg border border-border p-1">
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <Link
             key={tab.href}
             href={tab.href}
@@ -56,15 +57,19 @@ export function RegisterForm() {
       {state.message ? <Alert tone="error">{state.message}</Alert> : null}
 
       <form action={formAction} className="space-y-4">
-        <Field label="Nom complet" htmlFor="name">
+        <Field label={t.auth.register.name} htmlFor="name">
           <Input id="name" name="name" required minLength={2} autoComplete="name" />
         </Field>
 
-        <Field label="Adresse e-mail" htmlFor="email">
+        <Field label={t.auth.register.email} htmlFor="email">
           <Input id="email" name="email" type="email" required autoComplete="email" />
         </Field>
 
-        <Field label="Mot de passe" htmlFor="password" hint="8 caractères minimum.">
+        <Field
+          label={t.auth.register.password}
+          htmlFor="password"
+          hint={t.auth.register.passwordHint}
+        >
           <Input
             id="password"
             name="password"
@@ -79,9 +84,9 @@ export function RegisterForm() {
       </form>
 
       <p className="text-sm text-muted-foreground">
-        Vous avez déjà une identité ?{" "}
+        {t.auth.register.haveAccount}{" "}
         <Link href="/login" className="text-primary hover:underline">
-          Se connecter
+          {t.auth.register.signIn}
         </Link>
       </p>
     </div>

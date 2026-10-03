@@ -118,6 +118,7 @@ deepsick-24h-webcup/
 ├── lib/
 │   ├── auth.ts                     # NextAuth configuration
 │   ├── permissions.ts              # hasRole / hasAnyRole / requireRole
+│   ├── i18n/                       # fr/en/es dictionaries + server & client helpers
 │   └── prisma.ts                   # Prisma singleton
 ├── prisma/
 │   ├── schema.prisma
@@ -302,7 +303,9 @@ requireRole(session, role)    // throws / redirects when the role is missing
 - **Agent:** dense, high-contrast workspace; status badges, filters, action buttons
 - **Admin:** content and account management with clear feedback
 
-> **User-facing copy is written in French.** Code, comments and documentation stay in English.
+> **User-facing copy is localized** (French by default, plus English and Spanish — see
+> `lib/i18n/`). Code, comments and documentation stay in English; French URLs (`espace`,
+> `demandes`) are kept for the user-facing routes.
 
 ---
 
@@ -337,7 +340,7 @@ Aligned with the needs and their XP (see [`docs/NEEDS.md`](docs/NEEDS.md)). Aim 
 ### Phase 4 — Polish & Demo (Hours 18–24)
 
 1. Enforce roles everywhere (middleware + API guards) (`D08`, `D09`)
-2. Seed realistic demo data (French copy, believable city content)
+2. Seed realistic demo data (believable city content, kept in its stored language)
 3. Test the end-to-end journey: sign-up → request → agent action
 4. Responsive pass, empty/error states, small animations
 5. Prepare and rehearse the demo script
@@ -366,7 +369,10 @@ Demonstrate the role separation, the distinct agent workspace and the request li
 - **No heavy real-time:** use short polling (≈5 s) to refresh the agent view.
 - **No external file storage:** skip uploads unless a need explicitly requires them.
 - **Seed everything:** demo users, services, announcements and a few requests must exist on a fresh DB.
-- **French copy, English code.**
+- **Localized copy, English code.** Every user-facing string goes through `lib/i18n`
+  (`getDictionary()` on the server, `useT()` on the client) — never hardcode French in a component.
+- **In-world proper nouns stay untranslated** (Terra Nova, Ares Security Command, Asclepius,
+  Hephaestus, Hermes, Mercator, BioDôme); seeded content keeps its stored language.
 - **Focus on flow:** one complete, solid journey beats many half-built screens.
 
 ---

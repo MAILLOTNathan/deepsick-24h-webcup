@@ -95,6 +95,28 @@ Ten selectable themes, including **Mars Civic OS** (the `docs/ui-v1.svg` design,
 Switch from the palette icon in any header or from `/apparence`. See
 [`docs/PROJECT.md`](docs/PROJECT.md) § 8.
 
+> Copy layered on the dark hero/login scene uses the constant `scene-*` tokens
+> (`text-scene-foreground`, …), so it stays readable on the light themes too.
+
+## Languages
+
+The UI ships in **French (default), English and Spanish**.
+
+- Switch from the globe icon in any header or footer. The choice is stored in the `nt-locale`
+  cookie — no URL prefix, so the French route segments and the auth middleware stay untouched.
+- Dictionaries: [`lib/i18n/dictionaries/`](lib/i18n/dictionaries). `fr.ts` is the reference and
+  `en.ts` / `es.ts` are typed as `Dictionary` (`typeof fr`), so TypeScript rejects a locale that
+  misses a key.
+- Server components call `getDictionary()`, client components call `useT()`, and
+  `format(template, values)` interpolates `{placeholders}`. Dates follow the active locale
+  ([`lib/format.ts`](lib/format.ts)).
+- In-world proper nouns (Terra Nova, Ares Security Command, BicDôme…) and **seeded content**
+  (announcements, services, incidents) keep their stored language.
+
+**Adding a string:** add the key to `fr.ts`, then mirror it in `en.ts` and `es.ts`.
+**Adding a language:** add its code and label in [`lib/i18n/config.ts`](lib/i18n/config.ts), copy
+`fr.ts`, translate it, and register the dictionary in [`lib/i18n/server.ts`](lib/i18n/server.ts).
+
 ## Scripts
 
 | Command | Purpose |
