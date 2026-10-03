@@ -5,9 +5,9 @@ import { buttonClasses } from "@/components/ui/Button";
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-      <p className="font-mono text-xs uppercase tracking-[0.3em] text-mars">Erreur 404</p>
-      <h1 className="mt-4 font-mono text-3xl text-slate-100">Page introuvable</h1>
-      <p className="mt-3 max-w-md text-sm text-slate-400">
+      <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary">Erreur 404</p>
+      <h1 className="mt-4 font-mono text-3xl text-foreground">Page introuvable</h1>
+      <p className="mt-3 max-w-md text-sm text-muted-foreground">
         La ressource demandée n'existe pas ou n'est plus disponible sur la plateforme de Nova Terra.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">

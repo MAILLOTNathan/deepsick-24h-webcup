@@ -25,15 +25,15 @@ export default async function AnnouncementsPage() {
         <div className="space-y-4">
           {announcements.map((announcement) => (
             <Link key={announcement.id} href={`/announcements/${announcement.slug}`}>
-              <Card className="transition hover:border-mars/50">
-                <p className="font-mono text-xs uppercase tracking-wide text-slate-500">
+              <Card className="transition hover:border-primary/50">
+                <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
                   {formatDate(announcement.publishedAt ?? announcement.createdAt)}
                 </p>
-                <h2 className="mt-2 font-mono text-lg text-slate-100">{announcement.title}</h2>
+                <h2 className="mt-2 font-mono text-lg text-foreground">{announcement.title}</h2>
                 {announcement.excerpt ? (
-                  <p className="mt-2 text-sm text-slate-400">{announcement.excerpt}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{announcement.excerpt}</p>
                 ) : null}
-                <p className="mt-3 font-mono text-xs uppercase tracking-wide text-mars">
+                <p className="mt-3 font-mono text-xs uppercase tracking-wide text-primary">
                   Lire l'annonce →
                 </p>
               </Card>

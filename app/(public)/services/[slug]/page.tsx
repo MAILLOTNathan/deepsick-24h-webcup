@@ -24,7 +24,7 @@ export default async function ServiceDetailPage({ params }: Params) {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/services" className="text-sm text-mars hover:underline">
+      <Link href="/services" className="text-sm text-primary hover:underline">
         ← Tous les services
       </Link>
 
@@ -34,15 +34,15 @@ export default async function ServiceDetailPage({ params }: Params) {
         </span>
         <div>
           {service.category ? (
-            <p className="font-mono text-xs uppercase tracking-wide text-slate-500">
+            <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
               {service.category}
             </p>
           ) : null}
-          <h1 className="mt-1 font-mono text-3xl text-slate-50">{service.name}</h1>
+          <h1 className="mt-1 font-mono text-3xl text-foreground">{service.name}</h1>
         </div>
       </header>
 
-      <p className="mt-6 whitespace-pre-line text-slate-300">{service.description}</p>
+      <p className="mt-6 whitespace-pre-line text-muted-foreground">{service.description}</p>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/demandes/nouvelle" className={buttonClasses("primary")}>
@@ -55,15 +55,15 @@ export default async function ServiceDetailPage({ params }: Params) {
 
       {otherServices.length > 0 ? (
         <section className="mt-12">
-          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-mars">
+          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-primary">
             Autres services
           </h2>
           <div className="grid gap-4 md:grid-cols-3">
             {otherServices.map((item) => (
               <Link key={item.id} href={`/services/${item.slug}`}>
-                <Card className="h-full transition hover:border-mars/50">
-                  <h3 className="font-mono text-sm text-slate-100">{item.name}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-slate-400">{item.description}</p>
+                <Card className="h-full transition hover:border-primary/50">
+                  <h3 className="font-mono text-sm text-foreground">{item.name}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{item.description}</p>
                 </Card>
               </Link>
             ))}

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 import { Logo } from "@/components/layout/Logo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { buttonClasses } from "@/components/ui/Button";
 import { homeForRole } from "@/lib/roles";
 import { cn } from "@/lib/ui";
@@ -29,7 +30,7 @@ export function PublicHeader({
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-background backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Logo />
 
@@ -41,16 +42,20 @@ export function PublicHeader({
               className={cn(
                 "rounded-md px-3 py-2 font-mono text-xs uppercase tracking-wide transition",
                 isActive(link.href)
-                  ? "bg-surface text-mars"
-                  : "text-slate-300 hover:bg-surface hover:text-slate-100",
+                  ? "bg-muted text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
+              <span aria-hidden className="mr-1 text-primary/70">
+                {isActive(link.href) ? ">" : "/"}
+              </span>
               {link.label}
             </Link>
           ))}
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           {user ? (
             <>
               <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>
@@ -87,20 +92,21 @@ export function PublicHeader({
       </div>
 
       {open ? (
-        <div className="border-t border-border/60 px-4 py-3 md:hidden">
+        <div className="border-t border-border px-4 py-3 md:hidden">
           <div className="flex flex-col gap-1">
             {LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-2 font-mono text-xs uppercase tracking-wide text-slate-300 hover:bg-surface"
+                className="rounded-md px-3 py-2 font-mono text-xs uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground"
               >
                 {link.label}
               </Link>
             ))}
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <ThemeToggle />
             {user ? (
               <>
                 <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>

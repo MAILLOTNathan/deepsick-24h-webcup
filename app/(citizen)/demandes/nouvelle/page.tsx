@@ -13,7 +13,7 @@ export default async function NewRequestPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <Link href="/demandes" className="text-sm text-mars hover:underline">
+      <Link href="/demandes" className="text-sm text-primary hover:underline">
         ← Mes demandes
       </Link>
 

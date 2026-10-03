@@ -44,8 +44,8 @@ export default async function AdminHomePage() {
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-mono text-lg text-slate-100">Messages des habitants</h2>
-          <span className="font-mono text-xs uppercase tracking-wide text-slate-500">
+          <h2 className="font-mono text-lg text-foreground">Messages des habitants</h2>
+          <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
             {stats.contacts} au total
           </span>
         </div>
@@ -58,15 +58,15 @@ export default async function AdminHomePage() {
               <Card key={message.id} className="p-4">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
-                    <h3 className="truncate font-mono text-sm text-slate-100">
+                    <h3 className="truncate font-mono text-sm text-foreground">
                       {message.subject}
                     </h3>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {message.email} · {formatDateTime(message.createdAt)}
                     </p>
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-400">{message.body}</p>
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{message.body}</p>
                   </div>
-                  <span className="shrink-0 font-mono text-xs uppercase tracking-wide text-slate-500">
+                  <span className="shrink-0 font-mono text-xs uppercase tracking-wide text-muted-foreground">
                     {message.reference}
                   </span>
                 </div>

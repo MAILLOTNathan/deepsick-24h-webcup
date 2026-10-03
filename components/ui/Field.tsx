@@ -5,10 +5,13 @@ import type {
   TextareaHTMLAttributes,
 } from "react";
 
+import { Input as ShadcnInput } from "@/components/shadcn/input";
+import { Label } from "@/components/shadcn/label";
+import { Textarea as ShadcnTextarea } from "@/components/shadcn/textarea";
 import { cn } from "@/lib/ui";
 
-const BASE =
-  "w-full rounded-md border border-border/60 bg-background/70 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-mars focus:outline-none focus:ring-1 focus:ring-mars";
+const SELECT_BASE =
+  "h-8 w-full min-w-0 appearance-none rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30 md:text-sm";
 
 export function Field({
   label,
@@ -22,25 +25,27 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <label htmlFor={htmlFor} className="block space-y-1.5">
-      <span className="font-mono text-xs uppercase tracking-wide text-slate-300">{label}</span>
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={htmlFor} className="font-mono text-xs uppercase tracking-wide text-foreground">
+        {label}
+      </Label>
       {children}
-      {hint ? <span className="block text-xs text-slate-500">{hint}</span> : null}
-    </label>
+      {hint ? <span className="text-xs text-muted-foreground">{hint}</span> : null}
+    </div>
   );
 }
 
 export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn(BASE, className)} {...props} />;
+  return <ShadcnInput className={cn("font-mono", className)} {...props} />;
 }
 
 export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={cn(BASE, "min-h-28 resize-y", className)} {...props} />;
+  return <ShadcnTextarea className={cn("min-h-28 font-mono", className)} {...props} />;
 }
 
 export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select className={cn(BASE, "appearance-none", className)} {...props}>
+    <select className={cn(SELECT_BASE, "font-mono", className)} {...props}>
       {children}
     </select>
   );

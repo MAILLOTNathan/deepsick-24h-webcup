@@ -64,15 +64,15 @@ export function AgentRequestsTable({ initialRequests }: { initialRequests: Reque
       <Card className="mb-5 p-4">
         <div className="flex flex-wrap items-end gap-4">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wide text-slate-400">Afficher</p>
+            <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">Afficher</p>
             <div className="mt-2 flex gap-2">
               <button
                 type="button"
                 onClick={() => setFilter("actionable")}
                 className={`rounded-md border px-3 py-1.5 font-mono text-xs uppercase tracking-wide transition ${
                   filter === "actionable"
-                    ? "border-mars/50 bg-mars/10 text-mars"
-                    : "border-border/60 text-slate-300 hover:bg-surface"
+                    ? "border-primary/50 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:bg-muted"
                 }`}
               >
                 À traiter ({actionableCount})
@@ -82,8 +82,8 @@ export function AgentRequestsTable({ initialRequests }: { initialRequests: Reque
                 onClick={() => setFilter("all")}
                 className={`rounded-md border px-3 py-1.5 font-mono text-xs uppercase tracking-wide transition ${
                   filter === "all"
-                    ? "border-mars/50 bg-mars/10 text-mars"
-                    : "border-border/60 text-slate-300 hover:bg-surface"
+                    ? "border-primary/50 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:bg-muted"
                 }`}
               >
                 Toutes ({requests.length})
@@ -92,11 +92,11 @@ export function AgentRequestsTable({ initialRequests }: { initialRequests: Reque
           </div>
 
           <div>
-            <p className="font-mono text-xs uppercase tracking-wide text-slate-400">Statut</p>
+            <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">Statut</p>
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
-              className="mt-2 rounded-md border border-border/60 bg-background/70 px-3 py-1.5 text-sm text-slate-100"
+              className="mt-2 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground"
             >
               <option value="ALL">Tous les statuts</option>
               {REQUEST_STATUSES.map((status) => (
@@ -108,12 +108,12 @@ export function AgentRequestsTable({ initialRequests }: { initialRequests: Reque
           </div>
 
           <div className="min-w-48 flex-1">
-            <p className="font-mono text-xs uppercase tracking-wide text-slate-400">Recherche</p>
+            <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">Recherche</p>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Référence, objet, habitant…"
-              className="mt-2 w-full rounded-md border border-border/60 bg-background/70 px-3 py-1.5 text-sm text-slate-100 placeholder:text-slate-500"
+              className="mt-2 w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground"
             />
           </div>
         </div>
@@ -128,13 +128,13 @@ export function AgentRequestsTable({ initialRequests }: { initialRequests: Reque
         <div className="space-y-3">
           {visible.map((request) => (
             <Link key={request.id} href={`/agents/demandes/${request.id}`}>
-              <Card className="transition hover:border-mars/50">
+              <Card className="transition hover:border-primary/50">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                   <div className="min-w-0">
-                    <h3 className="truncate font-mono text-sm text-slate-100">
+                    <h3 className="truncate font-mono text-sm text-foreground">
                       {request.subject}
                     </h3>
-                    <p className="mt-1 font-mono text-xs text-slate-500">
+                    <p className="mt-1 font-mono text-xs text-muted-foreground">
                       {request.reference} · {request.authorName ?? "Habitant"} ·{" "}
                       {formatDate(request.createdAt)}
                       {request.assigneeName ? ` · ${request.assigneeName}` : ""}
@@ -151,7 +151,7 @@ export function AgentRequestsTable({ initialRequests }: { initialRequests: Reque
         </div>
       )}
 
-      <p className="mt-5 font-mono text-xs uppercase tracking-wide text-slate-600">
+      <p className="mt-5 font-mono text-xs uppercase tracking-wide text-muted-foreground">
         Actualisation automatique toutes les 5 secondes
       </p>
     </div>

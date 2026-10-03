@@ -47,13 +47,13 @@ export default async function MyRequestsPage({
         <div className="space-y-3">
           {requests.map((request) => (
             <Link key={request.id} href={`/demandes/${request.id}`}>
-              <Card className="transition hover:border-mars/50">
+              <Card className="transition hover:border-primary/50">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
-                    <h3 className="truncate font-mono text-sm text-slate-100">
+                    <h3 className="truncate font-mono text-sm text-foreground">
                       {request.subject}
                     </h3>
-                    <p className="mt-1 font-mono text-xs text-slate-500">
+                    <p className="mt-1 font-mono text-xs text-muted-foreground">
                       {request.reference} · {formatDate(request.createdAt)}
                       {request.assignee?.name ? ` · Agent : ${request.assignee.name}` : ""}
                     </p>

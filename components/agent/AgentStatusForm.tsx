@@ -35,9 +35,9 @@ export function AgentStatusForm({
       </form>
 
       {!hasAssignee ? (
-        <form action={assignToMeAction} className="border-t border-border/60 pt-4">
+        <form action={assignToMeAction} className="border-t border-border pt-4">
           <input type="hidden" name="requestId" value={requestId} />
-          <p className="mb-3 text-xs text-slate-500">
+          <p className="mb-3 text-xs text-muted-foreground">
             Aucun agent n'est encore assigné à cette demande.
           </p>
           <Button type="submit" variant="secondary">

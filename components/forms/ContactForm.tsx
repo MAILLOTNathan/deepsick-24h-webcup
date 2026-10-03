@@ -27,7 +27,7 @@ export function ContactForm() {
         {state.reference ? (
           <p className="mt-2">
             Référence de suivi :{" "}
-            <span className="font-mono text-slate-100">{state.reference}</span>
+            <span className="font-mono text-foreground">{state.reference}</span>
           </p>
         ) : null}
         <p className="mt-2 text-xs text-emerald-200/80">

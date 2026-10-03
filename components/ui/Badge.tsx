@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
 
+import { Badge as ShadcnBadge } from "@/components/shadcn/badge";
 import { cn } from "@/lib/ui";
 
 type Tone = "neutral" | "mars" | "info" | "success" | "warning" | "danger";
 
 const TONES: Record<Tone, string> = {
-  neutral: "border-border/60 bg-surface text-slate-300",
-  mars: "border-mars/40 bg-mars/10 text-mars",
+  neutral: "border-border text-muted-foreground",
+  mars: "border-primary/40 bg-primary/10 text-primary",
   info: "border-info/40 bg-info/10 text-info",
-  success: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-  warning: "border-amber-500/40 bg-amber-500/10 text-amber-300",
-  danger: "border-alert/40 bg-alert/10 text-alert",
+  success: "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300",
+  warning: "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-300",
+  danger: "border-destructive/40 bg-destructive/10 text-destructive",
 };
 
 export function Badge({
@@ -23,14 +24,11 @@ export function Badge({
   className?: string;
 }) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wide",
-        TONES[tone],
-        className,
-      )}
+    <ShadcnBadge
+      variant="outline"
+      className={cn("font-mono uppercase tracking-wide", TONES[tone], className)}
     >
       {children}
-    </span>
+    </ShadcnBadge>
   );
 }

@@ -19,24 +19,24 @@ export default async function AnnouncementDetailPage({ params }: Params) {
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/announcements" className="text-sm text-mars hover:underline">
+      <Link href="/announcements" className="text-sm text-primary hover:underline">
         ← Toutes les annonces
       </Link>
 
       <header className="mt-6">
-        <p className="font-mono text-xs uppercase tracking-wide text-slate-500">
+        <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
           {formatDate(announcement.publishedAt ?? announcement.createdAt)}
           {announcement.author?.name ? ` · ${announcement.author.name}` : ""}
         </p>
-        <h1 className="mt-2 font-mono text-3xl leading-tight text-slate-50">
+        <h1 className="mt-2 font-mono text-3xl leading-tight text-foreground">
           {announcement.title}
         </h1>
         {announcement.excerpt ? (
-          <p className="mt-4 text-lg text-slate-300">{announcement.excerpt}</p>
+          <p className="mt-4 text-lg text-muted-foreground">{announcement.excerpt}</p>
         ) : null}
       </header>
 
-      <div className="mt-8 whitespace-pre-line leading-relaxed text-slate-300">
+      <div className="mt-8 whitespace-pre-line leading-relaxed text-muted-foreground">
         {announcement.body}
       </div>
     </article>

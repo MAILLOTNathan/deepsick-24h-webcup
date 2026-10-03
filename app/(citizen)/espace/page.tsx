@@ -49,8 +49,8 @@ export default async function CitizenSpacePage() {
       <div className="mt-8 grid gap-6 lg:grid-cols-[2fr,1fr]">
         <section>
           <div className="mb-4 flex items-end justify-between">
-            <h2 className="font-mono text-lg text-slate-100">Mes demandes récentes</h2>
-            <Link href="/demandes" className="text-sm text-mars hover:underline">
+            <h2 className="font-mono text-lg text-foreground">Mes demandes récentes</h2>
+            <Link href="/demandes" className="text-sm text-primary hover:underline">
               Tout voir →
             </Link>
           </div>
@@ -64,11 +64,11 @@ export default async function CitizenSpacePage() {
             <div className="space-y-3">
               {recent.map((request) => (
                 <Link key={request.id} href={`/demandes/${request.id}`}>
-                  <Card className="transition hover:border-mars/50">
+                  <Card className="transition hover:border-primary/50">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h3 className="font-mono text-sm text-slate-100">{request.subject}</h3>
-                        <p className="mt-1 font-mono text-xs text-slate-500">
+                        <h3 className="font-mono text-sm text-foreground">{request.subject}</h3>
+                        <p className="mt-1 font-mono text-xs text-muted-foreground">
                           {request.reference} · {formatDate(request.createdAt)}
                         </p>
                       </div>
@@ -83,39 +83,39 @@ export default async function CitizenSpacePage() {
 
         <aside className="space-y-4">
           <Card>
-            <h2 className="font-mono text-sm uppercase tracking-wide text-slate-200">
+            <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
               Démarches rapides
             </h2>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
-                <Link href="/demandes/nouvelle" className="text-mars hover:underline">
+                <Link href="/demandes/nouvelle" className="text-primary hover:underline">
                   Créer une demande
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="text-mars hover:underline">
+                <Link href="/services" className="text-primary hover:underline">
                   Parcourir les services
                 </Link>
               </li>
               <li>
-                <Link href="/announcements" className="text-mars hover:underline">
+                <Link href="/announcements" className="text-primary hover:underline">
                   Lire les annonces
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-mars hover:underline">
+                <Link href="/contact" className="text-primary hover:underline">
                   Contacter l'administration
                 </Link>
               </li>
             </ul>
           </Card>
 
-          <Card className="text-sm text-slate-400">
-            <h2 className="font-mono text-sm uppercase tracking-wide text-slate-200">
+          <Card className="text-sm text-muted-foreground">
+            <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
               Votre identité
             </h2>
-            <p className="mt-3 text-slate-200">{session.user.name}</p>
-            <p className="text-xs text-slate-500">{session.user.email}</p>
+            <p className="mt-3 text-foreground">{session.user.name}</p>
+            <p className="text-xs text-muted-foreground">{session.user.email}</p>
           </Card>
         </aside>
       </div>

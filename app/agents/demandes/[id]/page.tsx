@@ -19,20 +19,20 @@ export default async function AgentRequestDetailPage({ params }: Params) {
 
   return (
     <div>
-      <Link href="/agents/demandes" className="text-sm text-mars hover:underline">
+      <Link href="/agents/demandes" className="text-sm text-primary hover:underline">
         ← Toutes les demandes
       </Link>
 
-      <div className="mt-4 mb-6 border-b border-border/60 pb-5">
-        <h1 className="font-mono text-2xl text-slate-100">{request.subject}</h1>
-        <p className="mt-1 font-mono text-xs text-slate-500">
+      <div className="mt-4 mb-6 border-b border-border pb-5">
+        <h1 className="font-mono text-2xl text-foreground">{request.subject}</h1>
+        <p className="mt-1 font-mono text-xs text-muted-foreground">
           {request.reference} · créée le {formatDateTime(request.createdAt)}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <StatusBadge status={request.status} />
           <PriorityBadge priority={request.priority} />
           {request.category ? (
-            <span className="font-mono text-xs uppercase tracking-wide text-slate-500">
+            <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
               {request.category}
             </span>
           ) : null}
@@ -42,28 +42,28 @@ export default async function AgentRequestDetailPage({ params }: Params) {
       <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
         <div className="space-y-6">
           <Card>
-            <h2 className="font-mono text-sm uppercase tracking-wide text-slate-200">
+            <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
               Description de l'habitant
             </h2>
-            <p className="mt-3 whitespace-pre-line text-sm text-slate-300">
+            <p className="mt-3 whitespace-pre-line text-sm text-muted-foreground">
               {request.description}
             </p>
           </Card>
 
           <Card>
-            <h2 className="font-mono text-sm uppercase tracking-wide text-slate-200">
+            <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
               Historique
             </h2>
             <ol className="mt-4 space-y-4">
               {request.history.map((event) => (
-                <li key={event.id} className="border-l border-border/60 pl-4">
+                <li key={event.id} className="border-l border-border pl-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={event.status} />
-                    <span className="font-mono text-xs text-slate-500">
+                    <span className="font-mono text-xs text-muted-foreground">
                       {formatDateTime(event.createdAt)}
                     </span>
                   </div>
-                  {event.note ? <p className="mt-1 text-sm text-slate-400">{event.note}</p> : null}
+                  {event.note ? <p className="mt-1 text-sm text-muted-foreground">{event.note}</p> : null}
                 </li>
               ))}
             </ol>
@@ -72,18 +72,18 @@ export default async function AgentRequestDetailPage({ params }: Params) {
 
         <div className="space-y-6">
           <Card>
-            <h2 className="font-mono text-sm uppercase tracking-wide text-slate-200">Habitant</h2>
-            <p className="mt-3 text-sm text-slate-200">{request.author?.name ?? "—"}</p>
-            <p className="text-xs text-slate-500">{request.author?.email}</p>
+            <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">Habitant</h2>
+            <p className="mt-3 text-sm text-foreground">{request.author?.name ?? "—"}</p>
+            <p className="text-xs text-muted-foreground">{request.author?.email}</p>
             {request.assignee?.name ? (
-              <p className="mt-3 font-mono text-xs uppercase tracking-wide text-slate-500">
+              <p className="mt-3 font-mono text-xs uppercase tracking-wide text-muted-foreground">
                 Assignée à {request.assignee.name}
               </p>
             ) : null}
           </Card>
 
           <Card>
-            <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-slate-200">
+            <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-foreground">
               Traitement
             </h2>
             <AgentStatusForm

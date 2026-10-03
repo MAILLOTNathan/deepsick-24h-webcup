@@ -53,14 +53,14 @@ export function AgentDashboard({
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-2 border-b border-border/60 pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-6 flex flex-col gap-2 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-mono text-2xl text-slate-100">Activité de la plateforme</h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <h1 className="font-mono text-2xl text-foreground">Activité de la plateforme</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Flux transmis par l'API Nova Terra, actualisé automatiquement.
           </p>
         </div>
-        <p className="font-mono text-xs uppercase tracking-wide text-slate-500">
+        <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
           {updatedAt ? `Actualisé à ${formatDateTime(updatedAt)}` : "Synchronisation…"}
         </p>
       </div>
@@ -74,8 +74,8 @@ export function AgentDashboard({
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-mono text-lg text-slate-100">Dernière activité</h2>
-          <Link href="/agents/demandes" className="text-sm text-mars hover:underline">
+          <h2 className="font-mono text-lg text-foreground">Dernière activité</h2>
+          <Link href="/agents/demandes" className="text-sm text-primary hover:underline">
             Voir les demandes →
           </Link>
         </div>
@@ -87,15 +87,15 @@ export function AgentDashboard({
             {activity.map((item) => (
               <li key={item.id}>
                 <Link href={item.href}>
-                  <Card className="flex items-center gap-4 p-4 transition hover:border-mars/50">
+                  <Card className="flex items-center gap-4 p-4 transition hover:border-primary/50">
                     <span className="text-xl" aria-hidden>
                       {KIND_ICONS[item.kind] ?? "•"}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-sm text-slate-100">{item.title}</p>
-                      <p className="truncate text-xs text-slate-500">{item.subtitle}</p>
+                      <p className="truncate font-mono text-sm text-foreground">{item.title}</p>
+                      <p className="truncate text-xs text-muted-foreground">{item.subtitle}</p>
                     </div>
-                    <span className="hidden shrink-0 font-mono text-xs text-slate-500 sm:block">
+                    <span className="hidden shrink-0 font-mono text-xs text-muted-foreground sm:block">
                       {formatDateTime(item.date)}
                     </span>
                   </Card>

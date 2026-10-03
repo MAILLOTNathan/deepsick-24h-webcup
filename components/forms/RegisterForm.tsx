@@ -22,9 +22,9 @@ export function RegisterForm() {
   const [state, formAction] = useFormState(registerAction, initialActionState);
 
   return (
-    <div className="rounded-lg border border-border/60 bg-surface/60 p-6">
-      <h1 className="font-mono text-xl text-slate-50">Créer un compte habitant</h1>
-      <p className="mt-1 text-sm text-slate-400">
+    <div className="rounded-lg border border-border bg-muted/60 p-6">
+      <h1 className="font-mono text-xl text-foreground">Créer un compte habitant</h1>
+      <p className="mt-1 text-sm text-muted-foreground">
         Quelques informations suffisent pour accéder aux services numériques de la ville.
       </p>
 
@@ -61,9 +61,9 @@ export function RegisterForm() {
         <SubmitButton />
       </form>
 
-      <p className="mt-5 text-sm text-slate-400">
+      <p className="mt-5 text-sm text-muted-foreground">
         Vous avez déjà un compte ?{" "}
-        <Link href="/login" className="text-mars hover:underline">
+        <Link href="/login" className="text-primary hover:underline">
           Se connecter
         </Link>
       </p>
