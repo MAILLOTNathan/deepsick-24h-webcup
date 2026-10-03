@@ -130,12 +130,43 @@ SUBMITTED → IN_REVIEW → IN_PROGRESS → RESOLVED → CLOSED
 
 ## 8. UI / design system
 
-- **Theme:** futuristic Mars colony interface
-- **Colors:** background `#0B0F19`, surface `#1F2937`, accents `#F4A261` (Mars orange), `#E63946`
-  (alert red), `#38BDF8` (info cyan)
-- **Typography:** `font-mono` for headings, `font-sans` for body
-- **Components:** reusable `Button`, `Card`, `Input`, `Badge`, `Modal`
+- **Foundation:** Tailwind CSS v4 + shadcn/ui (`components/shadcn/*`); tokens are declared in
+  `app/globals.css` through `@theme inline`.
+- **Semantic tokens:** `background`, `foreground`, `card`, `primary`, `secondary`, `muted`, `accent`,
+  `destructive`, `border`, `input`, `ring` (+ `chart-*`, `sidebar-*`). Components never hard-code
+  colours — they use token utilities, so every theme applies everywhere.
+- **Typography:** `font-mono` for headings, labels and figures (technical/terminal feel), `font-sans`
+  for body copy.
 - **Language:** user-facing copy is **French**; code, comments and docs are **English**.
+
+### Themes
+
+Ten user-selectable themes, applied by `next-themes` as a class on `<html>`:
+
+| id | label | scheme |
+| --- | --- | --- |
+| `dark` | CRT Phosphor — default | dark |
+| `light` | Paper Terminal | light |
+| `mars-civic` | Mars Civic OS — the `docs/ui-v1.svg` design | dark |
+| `bio-dome` | Bio-Dôme | dark |
+| `nebula` | Nébuleuse | dark |
+| `solar-flare` | Éruption Solaire | dark |
+| `glacier` | Glacier | dark |
+| `iron-oxide` | Oxyde de Fer | dark |
+| `daylight` | Grand Jour | light |
+| `void` | Vide Absolu — maximum contrast | dark |
+
+- **Registry:** [`lib/themes.ts`](../lib/themes.ts) — ids, labels, swatches, light/dark scheme.
+- **Token blocks:** `app/globals.css` — one class per theme (`.mars-civic`, `.bio-dome`, …).
+- **Provider:** `app/layout.tsx` — `attribute="class"`, `themes={THEME_IDS}`, `storageKey="nt-theme"`.
+- **Pickers:** the palette icon in the headers (`components/layout/ThemePicker.tsx`) and the gallery
+  at `/apparence`.
+- **Persistence:** `localStorage["nt-theme"]`; next-themes injects a blocking script so there is no
+  flash of the wrong theme.
+
+**Adding a theme:** add a `.<id> { …tokens… }` block in `app/globals.css`, add the entry to `THEMES`
+in `lib/themes.ts`, and — if it is dark — add `.<id> *` to the `@custom-variant dark (…)` list at the
+top of `globals.css` so `dark:` utilities keep applying.
 
 ## 9. Conventions
 

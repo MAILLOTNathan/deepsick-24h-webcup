@@ -8,7 +8,7 @@ fed by the Nova Terra API, and administrators manage content, accounts and acces
 
 ## Stack
 
-Next.js (App Router) + TypeScript · Tailwind CSS · Prisma · NextAuth.js · SQLite (dev) / PostgreSQL (prod)
+Next.js (App Router) + TypeScript · Tailwind CSS v4 · shadcn/ui · Prisma · NextAuth.js · SQLite (dev) / PostgreSQL (prod)
 
 ## Status
 
@@ -48,6 +48,13 @@ npm run dev                   # http://localhost:3000
 | `D09` | Differentiated permissions | ✅ |
 | `D19` | Agent workspace (Nova Terra API data) | ✅ |
 | `F22` | Citizen requests view with statuses | ✅ |
+
+### Thèmes
+
+Dix thèmes d'interface sont disponibles, dont **Mars Civic OS** (la maquette `docs/ui-v1.svg`) et les
+deux thèmes d'origine (CRT Phosphor / Paper Terminal). Changez-en depuis l'icône palette de l'en-tête
+ou la page `/apparence` ; le choix est mémorisé sur l'appareil. Voir
+[`docs/PROJECT.md`](docs/PROJECT.md) § 8.
 
 ### Scripts
 

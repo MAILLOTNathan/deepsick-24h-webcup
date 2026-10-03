@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { ThemePicker } from "@/components/layout/ThemePicker";
 import { buttonClasses } from "@/components/ui/Button";
 import { RoleBadge } from "@/components/ui/StatusBadge";
 import { cn } from "@/lib/ui";
@@ -70,7 +70,7 @@ export function AppShell({
                 <RoleBadge role={role} />
               </div>
             </div>
-            <ThemeToggle />
+            <ThemePicker />
             <Link href="/" className={buttonClasses("ghost", "sm")}>
               Site public
             </Link>
