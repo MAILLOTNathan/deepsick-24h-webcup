@@ -4,10 +4,11 @@ import { useFormState, useFormStatus } from "react-dom";
 
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
-import { Field, Input, Textarea } from "@/components/ui/Field";
+import { Field, Input, Select, Textarea } from "@/components/ui/Field";
 import { createServiceAction } from "@/lib/actions/admin";
 import { initialAdminActionState } from "@/lib/action-state";
 import { useT } from "@/lib/i18n/client";
+import { COLONY_SECTORS } from "@/lib/roles";
 
 function SubmitButton() {
   const t = useT();
@@ -54,6 +55,42 @@ export function ServiceForm() {
       <Field label={t.council.services.form.description} htmlFor="description">
         <Textarea id="description" name="description" required />
       </Field>
+
+      <Field label={t.council.services.form.sector} htmlFor="sector">
+        <Select id="sector" name="sector" defaultValue="">
+          <option value="">{t.common.none}</option>
+          {COLONY_SECTORS.map((sector) => (
+            <option key={sector} value={sector}>
+              {sector}
+            </option>
+          ))}
+        </Select>
+      </Field>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label={t.council.services.form.mapX} htmlFor="mapX" hint={t.council.services.form.mapHint}>
+          <Input
+            id="mapX"
+            name="mapX"
+            type="number"
+            min={0}
+            max={1}
+            step={0.01}
+            placeholder="0.50"
+          />
+        </Field>
+        <Field label={t.council.services.form.mapY} htmlFor="mapY">
+          <Input
+            id="mapY"
+            name="mapY"
+            type="number"
+            min={0}
+            max={1}
+            step={0.01}
+            placeholder="0.50"
+          />
+        </Field>
+      </div>
 
       <SubmitButton />
     </form>

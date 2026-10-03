@@ -26,6 +26,9 @@ export async function createServiceAction(
     description: formData.get("description"),
     category: formData.get("category"),
     icon: formData.get("icon"),
+    mapX: formData.get("mapX"),
+    mapY: formData.get("mapY"),
+    sector: formData.get("sector"),
   });
   if (!parsed.success) return { ok: false, message: firstError(parsed.error) };
 

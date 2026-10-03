@@ -142,6 +142,9 @@ export async function createMunicipalService(input: {
   description: string;
   category?: string | null;
   icon?: string | null;
+  mapX?: number | null;
+  mapY?: number | null;
+  sector?: string | null;
 }) {
   return prisma.municipalService.create({
     data: {
@@ -150,6 +153,9 @@ export async function createMunicipalService(input: {
       description: input.description.trim(),
       category: input.category?.trim() || null,
       icon: input.icon?.trim() || null,
+      mapX: input.mapX ?? null,
+      mapY: input.mapY ?? null,
+      sector: input.sector?.trim() || null,
       published: true,
     },
   });
