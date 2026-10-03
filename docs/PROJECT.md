@@ -158,6 +158,13 @@ Ten selectable themes applied by `next-themes` as a class on `<html>`:
 (`lib/themes.ts`), add its label/description to the three dictionaries, and — if dark — add
 `.<id> *` to the `@custom-variant dark (…)` list.
 
+**Copy drawn over the scene.** `ColonyScene` (landing hero, login panel) keeps a dark sky on
+**every** theme, so anything layered on it must use the constant `scene-*` tokens —
+`text-scene-foreground`, `text-scene-muted`, `border-scene-primary`, `text-[var(--scene-info)]` —
+instead of `foreground` / `muted-foreground`, which turn near-black on the light themes. The
+`--scene-*` values are declared once in `:root` and never overridden by a theme class; pass
+`<Logo tone="scene" />` for the mark.
+
 ### Internationalization
 
 Three locales: **fr** (default), **en**, **es**.

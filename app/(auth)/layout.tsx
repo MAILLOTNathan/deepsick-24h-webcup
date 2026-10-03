@@ -7,8 +7,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="relative hidden border-r border-border lg:block">
         <ColonyScene className="absolute inset-0" />
         <div className="relative flex h-full flex-col justify-between p-8">
-          <Logo />
-          <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+          <Logo tone="scene" />
+          <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-scene-muted">
             Mars Civic OS · 01
           </div>
         </div>

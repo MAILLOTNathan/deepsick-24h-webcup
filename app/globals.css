@@ -47,6 +47,13 @@
   --color-alert: var(--alert);
   --color-info: var(--info);
 
+  /* Copy drawn on top of the dark colony scene (ColonyScene). */
+  --color-scene-foreground: var(--scene-foreground);
+  --color-scene-muted: var(--scene-muted);
+  --color-scene-border: var(--scene-border);
+  --color-scene-info: var(--scene-info);
+  --color-scene-primary: var(--scene-primary);
+
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Cascadia Code",
@@ -103,6 +110,15 @@
   --mars: var(--primary);
   --alert: var(--destructive);
   --info: oklch(0.58 0.13 230);
+
+  /* Overlay palette for the hero / login scene. Declared once here and never
+     redefined by a theme class: the scene keeps a dark sky on every theme, so
+     `foreground`/`muted-foreground` would become unreadable on the light ones. */
+  --scene-foreground: oklch(0.97 0.01 90);
+  --scene-muted: oklch(0.79 0.02 250);
+  --scene-border: oklch(1 0 0 / 25%);
+  --scene-info: oklch(0.8 0.11 235);
+  --scene-primary: oklch(0.78 0.14 62);
 }
 
 /* --- Dark: CRT phosphor (default) ---------------------------------------- */

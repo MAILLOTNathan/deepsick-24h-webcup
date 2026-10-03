@@ -35,23 +35,25 @@ export default async function LandingPage() {
 
   return (
     <div>
-      {/* Hero — mirrors the desktop frame of the ui-v1 design */}
+      {/* Hero — mirrors the desktop frame of the ui-v1 design.
+          The scene keeps a dark sky on every theme, so its copy uses the
+          constant `scene-*` tokens instead of the theme's foreground/muted. */}
       <section className="relative border-b border-border">
         <ColonyScene className="absolute inset-0" />
         <div className="relative mx-auto flex min-h-[560px] max-w-6xl flex-col justify-between px-4 py-6">
           <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-foreground">{t.common.appName}</span>
-            <span className="text-muted-foreground">{t.landing.os}</span>
+            <span className="text-scene-foreground">{t.common.appName}</span>
+            <span className="text-scene-muted">{t.landing.os}</span>
           </div>
 
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--info)]/40 bg-[var(--info)]/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--info)]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--scene-info)]/40 bg-[var(--scene-info)]/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--scene-info)]">
               {COLONY_ARC}
             </span>
-            <h1 className="mt-4 font-mono text-3xl leading-tight text-foreground md:text-5xl">
+            <h1 className="mt-4 font-mono text-3xl leading-tight text-scene-foreground md:text-5xl">
               {t.landing.title}
             </h1>
-            <p className="mt-4 max-w-xl text-muted-foreground">
+            <p className="mt-4 max-w-xl text-scene-muted">
               {format(t.landing.subtitle, { population: COLONY_POPULATION })}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -64,10 +66,10 @@ export default async function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-scene-muted">
             <span>{colonyClock()}</span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block size-1.5 rounded-full bg-[var(--chart-3)]" />
+              <span className="inline-block size-1.5 rounded-full bg-[var(--scene-primary)]" />
               {t.common.colonyNominal}
             </span>
           </div>

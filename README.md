@@ -95,6 +95,9 @@ Ten selectable themes, including **Mars Civic OS** (the `docs/ui-v1.svg` design,
 Switch from the palette icon in any header or from `/apparence`. See
 [`docs/PROJECT.md`](docs/PROJECT.md) § 8.
 
+> Copy layered on the dark hero/login scene uses the constant `scene-*` tokens
+> (`text-scene-foreground`, …), so it stays readable on the light themes too.
+
 ## Languages
 
 The UI ships in **French (default), English and Spanish**.
