@@ -1,0 +1,27 @@
+# Documentation
+
+Index of the project documentation.
+
+| Document | Contents |
+| --- | --- |
+| [`../AGENTS.md`](../AGENTS.md) | AI coding agent brief — mission, stack, features, data model, roadmap, demo |
+| [`PROJECT.md`](PROJECT.md) | Product & architecture overview — roles, routes, data model, security, conventions |
+| [`NEEDS.md`](NEEDS.md) | Competition needs — the fetch script, the Webcup API and how needs are tracked |
+| [`TODO_terra_nova.md`](TODO_terra_nova.md) | **Auto-generated** needs checklist (do not edit by hand) |
+| [`../README.md`](../README.md) | Quick start for the repository |
+
+## Scope
+
+The scope is defined by the **competition needs** published by the 24h Webcup API. They are fetched
+with [`scripts/fetch_new_features.py`](../scripts/fetch_new_features.py) and written to
+[`TODO_terra_nova.md`](TODO_terra_nova.md). See [`NEEDS.md`](NEEDS.md) for the full workflow.
+
+## Refreshing the needs
+
+```fish
+set -x WEBCUP_API_KEY "<your-key>"
+python3 scripts/fetch_new_features.py
+```
+
+Run this **from the repository root** whenever a new wave of needs is released, then reconcile the
+roadmap in [`AGENTS.md`](../AGENTS.md).

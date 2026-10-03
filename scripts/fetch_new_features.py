@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fetch Terra Nova API requests and generate a TODO list grouped by difficulty.
+Fetch Nova Terra API requests and generate a TODO list grouped by difficulty.
 """
 
 import os
@@ -62,7 +62,7 @@ def generate_todo(data: dict) -> str:
         grouped[diff].append(req)
 
     lines = []
-    lines.append("# TODO list – Besoins Terra Nova\n")
+    lines.append("# TODO list – Besoins Nova Terra\n")
 
     total_xp = 0
 
