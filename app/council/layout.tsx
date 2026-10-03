@@ -15,5 +15,9 @@ export default async function CouncilLayout({ children }: { children: React.Reac
     { href: "/council/services", label: t.council.nav.services, icon: "🏛️" },
   ];
 
-  return <ConsoleShell station={t.council.station} nav={nav}>{children}</ConsoleShell>;
+  return (
+    <ConsoleShell station={t.council.station} nav={nav} role="COUNCIL">
+      {children}
+    </ConsoleShell>
+  );
 }

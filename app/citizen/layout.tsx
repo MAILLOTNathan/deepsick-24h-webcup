@@ -25,6 +25,7 @@ export default async function CitizenLayout({ children }: { children: React.Reac
       nav={nav}
       unread={unread}
       bellHref="/citizen/notifications"
+      role={session.user.role}
     >
       {children}
     </ConsoleShell>

@@ -39,12 +39,15 @@ export default async function ServicesPage() {
         />
       ) : (
         <div className="space-y-10">
-          {categories.map(([category, items]) => (
+          {categories.map(([category, items], index) => (
             <section key={category}>
               <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-primary">
                 {category}
               </h2>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div
+                className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+                data-tour={index === 0 ? "services-grid" : undefined}
+              >
                 {items.map((service) => (
                   <Link key={service.id} href={`/services/${service.slug}`} className="group">
                     <Card className="h-full transition group-hover:border-primary/50">

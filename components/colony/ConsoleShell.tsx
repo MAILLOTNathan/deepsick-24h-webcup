@@ -9,6 +9,7 @@ import { Bell } from "lucide-react";
 import { StatusStrip } from "@/components/colony/StatusStrip";
 import { LocaleSwitcher } from "@/components/i18n/LocaleSwitcher";
 import { ThemePicker } from "@/components/layout/ThemePicker";
+import { TourMenu } from "@/components/tour/TourMenu";
 import { buttonClasses } from "@/components/ui/Button";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/ui";
@@ -26,12 +27,15 @@ export function ConsoleShell({
   children,
   unread = 0,
   bellHref,
+  role,
 }: {
   station: string;
   nav: ConsoleNavItem[];
   children: ReactNode;
   unread?: number;
   bellHref?: string;
+  /** Signed-in role — decides which tutorials this space offers. */
+  role?: string | null;
 }) {
   const t = useT();
   const pathname = usePathname();
@@ -71,6 +75,7 @@ export function ConsoleShell({
             </Link>
           ) : null}
 
+          <TourMenu role={role} />
           <LocaleSwitcher />
           <ThemePicker />
 
@@ -86,7 +91,7 @@ export function ConsoleShell({
         <StatusStrip />
       </header>
 
-      <nav className="border-b border-border bg-card/30">
+      <nav className="border-b border-border bg-card/30" data-tour="console-nav">
         <div className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 py-2">
           {nav.map((item) => (
             <Link

@@ -18,6 +18,7 @@ const LINKS = [
   { href: "/services", label: "services" },
   { href: "/announcements", label: "announcements" },
   { href: "/contact", label: "contact" },
+  { href: "/guide", label: "guide" },
 ] as const;
 
 export function PublicHeader({
@@ -37,11 +38,12 @@ export function PublicHeader({
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Logo />
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 md:flex" data-tour="public-nav">
           {LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
+              data-tour={`nav-${link.label}`}
               className={cn(
                 "rounded-md px-3 py-2 font-mono text-xs uppercase tracking-wide transition",
                 isActive(link.href)
@@ -58,8 +60,12 @@ export function PublicHeader({
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <LocaleSwitcher />
-          <ThemePicker />
+          <span data-tour="locale">
+            <LocaleSwitcher />
+          </span>
+          <span data-tour="theme">
+            <ThemePicker />
+          </span>
           {user ? (
             <>
               <Link href={homeForRole(user.role)} className={buttonClasses("secondary", "sm")}>
