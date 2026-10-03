@@ -79,6 +79,7 @@ A second, parallel flow handles **démarches administratives** (`ServiceRequest`
 | `/operations/administration`, `/operations/administration/[id]` | Admin agent (+Council) | Démarches |
 | `/council`, `/council/users`, `/council/announcements`, `/council/services` | Council | Oversight |
 | `/apparence` | Public | Theme gallery |
+| `/dev/tickets`, `/dev/tickets/[code]` | Dev / Council | Webcup needs tracked as tickets |
 
 Legacy routes redirect: `/espace → /citizen`, `/demandes → /citizen/reports`,
 `/agents → /operations/administration`, `/admin → /council`.
@@ -171,6 +172,19 @@ Ten selectable themes applied by `next-themes` as a class on `<html>`:
 | 5 — Other services | Transport, commerce, administration |
 | 6 — Council & polish | Oversight, roles, announcements, responsive, demo script |
 
-## 11. Open questions
+## 11. Developer panel
+
+`/dev/tickets` turns the Webcup needs into tickets so the team can work them like a backlog.
+
+- **Models:** `Ticket` (one per need code, plus local `status` / `assignee`) and `TicketComment`
+  (free-form notes and auto-logged `EVENT` entries for status/assignee changes).
+- **Sync:** `lib/tickets.ts` calls the Webcup API (`WEBCUP_API_URL`, header `X-Webcup-Api-Key`) and
+  upserts by `code`, refreshing only API-sourced fields — local state survives.
+- **UI:** `components/dev/TicketBoard.tsx` (stats, status/difficulty filters, search, list **and**
+  board views) and the ticket detail page (description, timeline, status/assignee form, comments).
+- **Access:** `lib/dev-access.ts` — open in development, opt-in via `DEV_PANEL=1`, or Council only;
+  otherwise `notFound()`.
+
+## 12. Open questions
 
 - **“Nova Terra API” (`D19`)**: still tracked as the platform's own read API (`/api/agent/activity`).

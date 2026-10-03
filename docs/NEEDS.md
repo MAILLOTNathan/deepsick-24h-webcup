@@ -177,3 +177,11 @@ All currently visible needs belong to the **Socle** group (the foundation).
 - Add nicer French summaries to `SUMMARY_KEYWORDS` when a new need code appears.
 - If the API introduces a new difficulty, add it to `DIFFICULTY_ORDER` — unknown values still sort last
   (weight `99`), so nothing breaks.
+
+## Developer panel (web UI)
+
+The same needs can be worked from the app instead of the Markdown list: `/dev/tickets` imports them
+as tickets, keeps a local workflow status (`TODO` / `IN_PROGRESS` / `BLOCKED` / `REVIEW` / `DONE`),
+supports assignment and comments, and re-synchronises on demand — see
+[`PROJECT.md`](PROJECT.md) § 11. It requires `WEBCUP_API_KEY` and mirrors the summaries used by the
+script (`lib/ticket-status.ts` ↔ `SUMMARY_KEYWORDS`).

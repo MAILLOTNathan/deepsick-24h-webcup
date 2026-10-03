@@ -75,6 +75,20 @@ The Webcup needs remain demonstrable through the ecosystem:
 
 Refresh the need list whenever a wave drops — see [`docs/NEEDS.md`](docs/NEEDS.md).
 
+## Developer panel
+
+`/dev/tickets` is a ticketing UI for the competition needs served by the Webcup API: filter them by
+status and difficulty, open a ticket to read its official description, change the status, assign it,
+comment, and **synchronise** to pull the latest waves.
+
+- **Access:** open in development, opt-in with `DEV_PANEL=1`, or restricted to the High Council —
+  otherwise the route returns 404.
+- **Sync** needs `WEBCUP_API_KEY` in `.env`. Local workflow state (status, assignee, comments) is
+  never overwritten by a sync.
+- Seeded tickets mirror `docs/TODO_terra_nova.md`; the panel is the interactive counterpart of
+  `scripts/fetch_new_features.py`.
+- Statuses: `TODO → IN_PROGRESS → REVIEW → DONE` (plus `BLOCKED`).
+
 ## Themes
 
 Ten selectable themes, including **Mars Civic OS** (the `docs/ui-v1.svg` design, now the default).
