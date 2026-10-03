@@ -12,9 +12,9 @@ export default async function AgentRequestsPage() {
 
   return (
     <div>
-      <div className="mb-6 border-b border-border/60 pb-5">
-        <h1 className="font-mono text-2xl text-slate-100">Demandes des habitants</h1>
-        <p className="mt-1 text-sm text-slate-400">
+      <div className="mb-6 border-b border-border pb-5">
+        <h1 className="font-mono text-2xl text-foreground">Demandes des habitants</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Identifiez l'état de chaque demande et distinguez rapidement celles qui nécessitent encore
           une action.
         </p>

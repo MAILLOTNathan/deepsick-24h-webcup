@@ -39,9 +39,9 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
   }
 
   return (
-    <div className="rounded-lg border border-border/60 bg-surface/60 p-6">
-      <h1 className="font-mono text-xl text-slate-50">Connexion</h1>
-      <p className="mt-1 text-sm text-slate-400">Accédez à votre espace personnel.</p>
+    <div className="rounded-lg border border-border bg-muted/60 p-6">
+      <h1 className="font-mono text-xl text-foreground">Connexion</h1>
+      <p className="mt-1 text-sm text-muted-foreground">Accédez à votre espace personnel.</p>
 
       {registered ? (
         <Alert tone="success" className="mt-4">
@@ -75,15 +75,15 @@ export function LoginForm({ registered = false }: { registered?: boolean }) {
         </Button>
       </form>
 
-      <p className="mt-5 text-sm text-slate-400">
+      <p className="mt-5 text-sm text-muted-foreground">
         Pas encore de compte ?{" "}
-        <Link href="/register" className="text-mars hover:underline">
+        <Link href="/register" className="text-primary hover:underline">
           Créer un compte
         </Link>
       </p>
 
-      <div className="mt-5 rounded-md border border-border/60 bg-background/40 p-3 text-xs text-slate-500">
-        <p className="font-mono uppercase tracking-wide text-slate-400">Comptes de démonstration</p>
+      <div className="mt-5 rounded-md border border-border bg-background p-3 text-xs text-muted-foreground">
+        <p className="font-mono uppercase tracking-wide text-muted-foreground">Comptes de démonstration</p>
         <p className="mt-1">citoyen@novaterra.fr · agent@novaterra.fr · admin@novaterra.fr</p>
         <p>Mot de passe : password123</p>
       </div>

@@ -27,14 +27,14 @@ export default async function AdminAnnouncementsPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
         <Card>
-          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-slate-200">
+          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-foreground">
             Nouvelle annonce
           </h2>
           <AnnouncementForm />
         </Card>
 
         <section>
-          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-slate-200">
+          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-foreground">
             Annonces ({announcements.length})
           </h2>
 
@@ -47,15 +47,15 @@ export default async function AdminAnnouncementsPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-mono text-sm text-slate-100">{announcement.title}</h3>
+                        <h3 className="font-mono text-sm text-foreground">{announcement.title}</h3>
                         <Badge tone={announcement.published ? "success" : "neutral"}>
                           {announcement.published ? "Publiée" : "Brouillon"}
                         </Badge>
                       </div>
-                      <p className="mt-1 line-clamp-2 text-sm text-slate-400">
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                         {announcement.excerpt ?? announcement.body}
                       </p>
-                      <p className="mt-2 font-mono text-xs text-slate-500">
+                      <p className="mt-2 font-mono text-xs text-muted-foreground">
                         {formatDate(announcement.publishedAt ?? announcement.createdAt)}
                         {announcement.author?.name ? ` · ${announcement.author.name}` : ""}
                       </p>
@@ -64,7 +64,7 @@ export default async function AdminAnnouncementsPage() {
                       {announcement.published ? (
                         <Link
                           href={`/announcements/${announcement.slug}`}
-                          className="font-mono text-xs uppercase tracking-wide text-mars hover:underline"
+                          className="font-mono text-xs uppercase tracking-wide text-primary hover:underline"
                         >
                           Voir
                         </Link>

@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <Logo />
       </div>
       <div className="w-full max-w-md">{children}</div>
-      <p className="mt-8 font-mono text-xs uppercase tracking-wide text-slate-600">
+      <p className="mt-8 font-mono text-xs uppercase tracking-wide text-muted-foreground">
         Ville de Nova Terra — Plateforme citoyenne
       </p>
     </div>

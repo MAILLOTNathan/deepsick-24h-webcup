@@ -17,8 +17,8 @@ export default function ContactPage() {
           <ContactForm />
         </Card>
 
-        <Card className="space-y-3 text-sm text-slate-400">
-          <h2 className="font-mono text-sm uppercase tracking-wide text-slate-200">
+        <Card className="space-y-3 text-sm text-muted-foreground">
+          <h2 className="font-mono text-sm uppercase tracking-wide text-foreground">
             Bon à savoir
           </h2>
           <p>
@@ -28,7 +28,7 @@ export default function ContactPage() {
             Les agents municipaux consultent les messages depuis leur espace de travail et y
             répondent dans les meilleurs délais.
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Urgence ? Contactez directement les services d'urgence de la colonie.
           </p>
         </Card>

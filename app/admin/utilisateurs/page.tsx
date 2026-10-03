@@ -34,23 +34,23 @@ export default async function AdminUsersPage() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-mono text-sm text-slate-100">
+                      <h3 className="font-mono text-sm text-foreground">
                         {user.name ?? "Sans nom"}
                       </h3>
                       <RoleBadge role={user.role} />
                       {isSelf ? (
-                        <span className="font-mono text-xs uppercase tracking-wide text-slate-500">
+                        <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
                           Vous
                         </span>
                       ) : null}
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {user.email} · inscrit le {formatDate(user.createdAt)}
                     </p>
                   </div>
 
                   {isSelf ? (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Vous ne pouvez pas modifier votre propre rôle.
                     </p>
                   ) : (
@@ -59,7 +59,7 @@ export default async function AdminUsersPage() {
                       <select
                         name="role"
                         defaultValue={user.role}
-                        className="rounded-md border border-border/60 bg-background/70 px-3 py-1.5 text-sm text-slate-100"
+                        className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground"
                       >
                         {ROLES.map((role) => (
                           <option key={role} value={role}>

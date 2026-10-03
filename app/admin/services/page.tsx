@@ -24,14 +24,14 @@ export default async function AdminServicesPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
         <Card>
-          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-slate-200">
+          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-foreground">
             Nouveau service
           </h2>
           <ServiceForm />
         </Card>
 
         <section>
-          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-slate-200">
+          <h2 className="mb-4 font-mono text-sm uppercase tracking-wide text-foreground">
             Services existants ({services.length})
           </h2>
 
@@ -45,12 +45,12 @@ export default async function AdminServicesPage() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span aria-hidden>{service.icon ?? "🏛️"}</span>
-                        <h3 className="font-mono text-sm text-slate-100">{service.name}</h3>
+                        <h3 className="font-mono text-sm text-foreground">{service.name}</h3>
                       </div>
-                      <p className="mt-1 line-clamp-2 text-sm text-slate-400">
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                         {service.description}
                       </p>
-                      <p className="mt-2 font-mono text-xs text-slate-500">
+                      <p className="mt-2 font-mono text-xs text-muted-foreground">
                         /{service.slug} · {formatDate(service.createdAt)}
                       </p>
                     </div>

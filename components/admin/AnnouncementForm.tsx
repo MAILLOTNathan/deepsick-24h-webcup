@@ -38,7 +38,7 @@ export function AnnouncementForm() {
         <Textarea id="body" name="body" required className="min-h-40" />
       </Field>
 
-      <label className="flex items-center gap-2 text-sm text-slate-300">
+      <label className="flex items-center gap-2 text-sm text-muted-foreground">
         <input type="checkbox" name="published" className="h-4 w-4 accent-[#F4A261]" />
         Publier immédiatement
       </label>
