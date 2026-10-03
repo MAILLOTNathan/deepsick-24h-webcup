@@ -1,5 +1,8 @@
-import type { ReactNode } from "react";
+"use client";
 
+import { useRef, type ReactNode } from "react";
+
+import { revealSelf, useMotionLayoutEffect } from "@/lib/motion";
 import { cn } from "@/lib/ui";
 
 /** Live indicator (green pulse) used in the ops headers. */
@@ -37,7 +40,11 @@ export function SectionHeader({
   );
 }
 
-/** Row used by every live feed / list in the design. */
+/**
+ * Row used by every live feed / list in the design.
+ *
+ * Motion: each row fades in, staggered by its index in the list.
+ */
 export function FeedRow({
   title,
   meta,
@@ -53,8 +60,18 @@ export function FeedRow({
   href?: string;
   className?: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useMotionLayoutEffect(() => {
+    const animation = revealSelf(ref.current, { step: 45, y: 8, duration: 520 });
+    return () => {
+      animation?.revert();
+    };
+  }, []);
+
   const inner = (
     <div
+      ref={ref}
       className={cn(
         "flex items-center gap-3 rounded-lg border border-border bg-card px-3 py-2.5 transition",
         href && "hover:border-primary/50",

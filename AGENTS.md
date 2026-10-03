@@ -112,6 +112,7 @@ deepsick-24h-webcup/
 │       └── agent/                  # Nova Terra API surface consumed by the agent workspace
 ├── components/
 │   ├── ui/                         # Button, Card, Input, Badge, Modal…
+│   ├── motion/                     # <Reveal> animation wrapper
 │   ├── layout/                     # shells for public / citizen / agent
 │   ├── public/
 │   └── agent/
@@ -373,6 +374,8 @@ Demonstrate the role separation, the distinct agent workspace and the request li
   (`getDictionary()` on the server, `useT()` on the client) — never hardcode French in a component.
 - **In-world proper nouns stay untranslated** (Terra Nova, Ares Security Command, Asclepius,
   Hephaestus, Hermes, Mercator, BioDôme); seeded content keeps its stored language.
+- **Motion is anime.js, via `lib/motion.ts`.** Use `reveal`/`revealSelf`/`countUp`/`drawIn` rather
+  than ad-hoc transitions, and always keep the reduced-motion guard intact.
 - **Focus on flow:** one complete, solid journey beats many half-built screens.
 
 ---

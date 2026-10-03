@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { Check } from "lucide-react";
 
 import { ThemeSwatch } from "@/components/layout/ThemePicker";
+import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useT } from "@/lib/i18n/client";
@@ -22,7 +23,7 @@ export function ThemeGallery() {
   const copy = t.themes as Record<string, { label: string; description: string }>;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <Reveal stagger={80} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {THEMES.map((candidate) => {
         const isActive = active === candidate.id;
         const item = copy[candidate.id] ?? {
@@ -65,6 +66,6 @@ export function ThemeGallery() {
           </Card>
         );
       })}
-    </div>
+    </Reveal>
   );
 }
