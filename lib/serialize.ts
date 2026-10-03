@@ -155,3 +155,53 @@ export function toOrderRow(order: OrderLike): OrderRowDto {
     customerName: order.customer?.name ?? null,
   };
 }
+
+export type TicketRowDto = {
+  code: string;
+  title: string;
+  difficulty: string;
+  level: number;
+  xp: number;
+  group: string | null;
+  wave: number | null;
+  isAi: boolean;
+  status: string;
+  assignee: string | null;
+  commentCount: number;
+  syncedAt: string;
+  updatedAt: string;
+};
+
+type TicketLike = {
+  code: string;
+  title: string;
+  difficulty: string;
+  level: number;
+  xp: number;
+  group: string | null;
+  wave: number | null;
+  isAi: boolean;
+  status: string;
+  assignee: string | null;
+  syncedAt: Date;
+  updatedAt: Date;
+  _count?: { comments: number };
+};
+
+export function toTicketRow(ticket: TicketLike): TicketRowDto {
+  return {
+    code: ticket.code,
+    title: ticket.title,
+    difficulty: ticket.difficulty,
+    level: ticket.level,
+    xp: ticket.xp,
+    group: ticket.group,
+    wave: ticket.wave,
+    isAi: ticket.isAi,
+    status: ticket.status,
+    assignee: ticket.assignee,
+    commentCount: ticket._count?.comments ?? 0,
+    syncedAt: ticket.syncedAt.toISOString(),
+    updatedAt: ticket.updatedAt.toISOString(),
+  };
+}

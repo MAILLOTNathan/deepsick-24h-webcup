@@ -203,6 +203,48 @@ async function main() {
     });
   }
 
+  /* --- Dev panel: Webcup needs tracked as tickets ---------------------- */
+  const tickets = [
+    { code: "D01", title: "Inscription / création de compte habitant", difficulty: "Facile", level: 1, xp: 250, status: "DONE", assignee: "Neisan", sortOrder: 1, wave: 0, isAi: false },
+    { code: "D03", title: "Connexion + espace personnel", difficulty: "Facile", level: 1, xp: 250, status: "DONE", assignee: "Neisan", sortOrder: 2, wave: 0, isAi: false },
+    { code: "D04", title: "Contact administration (formulaire + accusé)", difficulty: "Facile", level: 1, xp: 250, status: "REVIEW", assignee: "Neisan", sortOrder: 3, wave: 0, isAi: false },
+    { code: "D05", title: "Présentation des services municipaux", difficulty: "Facile", level: 1, xp: 250, status: "DONE", assignee: null, sortOrder: 4, wave: 0, isAi: false },
+    { code: "D06", title: "Publications / annonces municipales", difficulty: "Facile", level: 1, xp: 250, status: "DONE", assignee: null, sortOrder: 5, wave: 0, isAi: false },
+    { code: "F22", title: "Vue des demandes habitants avec états", difficulty: "Facile", level: 1, xp: 250, status: "IN_PROGRESS", assignee: "Neisan", sortOrder: 6, wave: 0, isAi: false },
+    { code: "D07", title: "Page d'accueil claire et hiérarchisée", difficulty: "Moyenne", level: 2, xp: 500, status: "DONE", assignee: null, sortOrder: 7, wave: 0, isAi: false },
+    { code: "D08", title: "Rôles : citoyen / agent / admin", difficulty: "Moyenne", level: 2, xp: 500, status: "DONE", assignee: null, sortOrder: 8, wave: 0, isAi: false },
+    { code: "D09", title: "Permissions / accès différenciés", difficulty: "Moyenne", level: 2, xp: 500, status: "IN_PROGRESS", assignee: "Neisan", sortOrder: 9, wave: 0, isAi: false },
+    { code: "D19", title: "Espace agents avec vue sur les données API", difficulty: "Difficile", level: 3, xp: 750, status: "TODO", assignee: null, sortOrder: 10, wave: 0, isAi: false },
+  ];
+
+  for (const ticket of tickets) {
+    await prisma.ticket.upsert({
+      where: { code: ticket.code },
+      update: { ...ticket },
+      create: {
+        ...ticket,
+        description:
+          "Besoin publié par l'API Webcup. Utilisez « Synchroniser » dans le panneau dev pour rafraîchir la description officielle.",
+        group: "Socle",
+        requester: "Ville de Nova Terra",
+        requesterType: "Institution",
+      },
+    });
+  }
+
+  const f22 = await prisma.ticket.findUnique({ where: { code: "F22" } });
+  if (f22) {
+    await prisma.ticketComment.create({
+      data: { ticketId: f22.id, author: "Neisan", kind: "COMMENT", body: "Filtre « à traiter » livré, reste à brancher le temps réel." },
+    });
+  }
+  const d19 = await prisma.ticket.findUnique({ where: { code: "D19" } });
+  if (d19) {
+    await prisma.ticketComment.create({
+      data: { ticketId: d19.id, author: "Neisan", kind: "COMMENT", body: "Bloqué en attendant la confirmation de l'API Nova Terra côté organisateurs." },
+    });
+  }
+
   console.log("✅ Terra Nova ecosystem seeded.");
   for (const user of USERS) console.log(`   ${user.email.padEnd(30)} ${user.role}`);
   console.log(`   mot de passe : ${DEMO_PASSWORD}`);

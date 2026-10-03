@@ -78,6 +78,18 @@ export default async function CouncilPage() {
           ))}
         </div>
       </section>
+
+      <section>
+        <SectionHeader title="Outils développeur" />
+        <Link href="/dev/tickets">
+          <Card size="sm" className="gap-1 p-4 transition hover:border-primary/50">
+            <p className="font-mono text-sm text-foreground">🎫 Panneau des tickets Webcup</p>
+            <p className="text-xs text-muted-foreground">
+              Suivre les besoins publiés par l'API, les assigner et synchroniser les vagues.
+            </p>
+          </Card>
+        </Link>
+      </section>
     </div>
   );
 }

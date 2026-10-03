@@ -222,3 +222,46 @@ model Message {
   sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
+
+// ------------------------------------------------------------------
+// Developer tooling — Webcup needs tracked as tickets
+// ------------------------------------------------------------------
+
+// A competition need ("besoin") pulled from the Webcup API and managed as a
+// ticket in the dev panel. `status` / `assignee` are local workflow state and
+// are never overwritten by a sync.
+model Ticket {
+  id            String          @id @default(cuid())
+  code          String          @unique // D01, F22, …
+  title         String
+  description   String
+  difficulty    String // Facile | Moyenne | Difficile | Expert
+  level         Int             @default(1)
+  xp            Int             @default(0)
+  group         String? // Socle, …
+  requester     String?
+  requesterType String?
+  wave          Int?
+  isAi          Boolean         @default(false)
+  sortOrder     Int             @default(0)
+  status        String          @default("TODO") // TODO | IN_PROGRESS | BLOCKED | REVIEW | DONE
+  assignee      String?
+  syncedAt      DateTime        @default(now())
+  comments      TicketComment[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([status])
+}
+
+model TicketComment {
+  id        String   @id @default(cuid())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author    String
+  body      String
+  kind      String   @default("COMMENT") // COMMENT | EVENT
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+}
