@@ -1,15 +1,16 @@
 // Nova Terra — Prisma schema.
 //
-// The competition docs describe enums, but SQLite (used for local dev) does not
-// support them. Enum-like fields are therefore plain strings, with the allowed
-// values + labels centralised in `lib/roles.ts` and validated server-side.
+// The competition docs describe enums, but the target database stores them as
+// plain strings, with the allowed values + labels centralised in
+// `lib/roles.ts` and validated server-side.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
